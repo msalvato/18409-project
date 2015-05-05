@@ -133,6 +133,23 @@ This paper looks at a few statistics about how points are distributed and how it
 TODO: summarize the main contributions of this paper.
 
 \subsection{Definitions}
-The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and obviously $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem, and that $\geq$ sign will almost always be a $>$ sign in practice.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is in some sense \emph{important}.  We define 
+The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and obviously $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem, and that $\geq$ sign will almost always be a $>$ sign in practice.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is in some sense \emph{important}.  We define an optimal clustering solution to be $\beta$-distributed for $\beta > 0$ if for any $i$ and any point $x \notin C^i, d(x, c_i) \geq \beta \frac{OPT}{|C_i|}$ ; intuitively, a point outside a given cluster's distance to that cluster's center is sufficiently larger (measured by $\beta$ than the average distance of points within that cluster to its center.  Specifically for this paper, we will focus on the $k$-median case, but analogous logic applies to the $k$-means case as well.   
+
+Now, we prove that any $(1+\alpha)$-weakly deletion-stable $k$-median instance is $\frac{\alpha}{2}$-distributed,
+
+% and that any $(1+\alpha)$-weakly deletion-stable $k$-mean instance is $\frac{\alpha}{4}$-distributed.
+
+In each case, the proof will examine the difference $OPT^{i \rightarrow j} - OPT$.  Each point $x \in C_i$ contributes $d(x, c_i)$ to $\Phi$, and on deleting $C_i$ and remapping its points to $C_j$, contributes $d(x, c_j)$.  By the triangle inequality, $d(x, c_j) \leq d(x, c_i) + d(c_i, c_j)$.  $d(x, c_j)$ is the contribution of the points that were in $C_i$ to $C_j$ upon deletion.  Thus, the difference in contribution to $\Phi$ is the difference in cost upon swapping the points between the two clusters, which is $ d(x, c_j)  - d(x, c_i) \leq d(c_i, c_j)$.  Summing up over the original cluster $C_i$,
+
+\begin{align}
+\sum_{k \in C_i} (d(x, c_j) )  - OPT_i \leq |C_i| d(c_i, c_j)
+\end{align}
+
+The increase (LHS) is also $ \geq \alpha OPT$ by $(1+\alpha)$-weakly deletion-stability, meaning $\alpha OPT \leq |C_i| d(c_i, c_j)$, or $d(c_i, c_j) \geq \frac{\alpha OPT}{|C_i|}$.  Then, for any point $p \notin C_i, d(c_i, c_j) \leq d(c_i, p) + d(c_j, p)$, and this is $\leq 2d(c_i, p)$ (TODO: why?).  Thus, applying this to the previous inequality, we get that $d(c_i, p) > \frac{\alpha OPT}{2 |C_i|}$; i.e. $\frac{alpha}{2}$ distributed.
+
+\subsection{Algorithm}
+TODO:
+
+
 
 \end{document}
