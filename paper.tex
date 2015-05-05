@@ -1,0 +1,138 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\textsc{18.409 - Algorithmic Aspects of Machine Learning} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Final Project \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{Mike Salvato and Andrew Spielberg} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section{Approximate Clustering Without the Approximation}
+
+
+They key point to this paper is to highlight the fact that, when talking about clustering, most people think of it in terms of minimizing some \emph{objective function} - e.g. minimizing the sum distance to nearby exemplar points (centroids) as in $k$-median clustering.  However, the actual \emph{hope} is that the output labelings produced by such a metric will be in some way "correct" - that is, that points are classified as some \emph{target} clustering up to some permutations of label.  More formally, this means that the hope is that if we find some clustering with an objective within a factor $c$ of the optimal, that we are then \emph{guaranteed} to have some clustering that is bounded by $\epsilon$ in a measure of "incorrectly clustered" points (we will define that measure later).  When we can assume this, we will see that we can derive efficient algorithms and guarantees for finding such $c$-approximation (and thus $\epsilon$ close in classification) clusterings.
+
+\subsection{Introduction}
+
+Spend one to two paragraph summarizing the main contributions and outline of this paper.
+
+TODO: where do approximation algorithms come in?  What are they?  Talk about that here.
+
+\subsection{Definitions}
+As in the paper, we'll begin by defining a few important definitions:
+
+First, let $C$ be a $k$-clustering, a partition of the set of $n$ points $S$ into a a set of subsets $\{C_1, C_2, ...C_k\}$, and let $C_T$ be the target clustering that we wish to find, and $d$ be the distance function between points on our metric space.  Let $\Phi$ be the objective function with minimum value $OPT_{\Phi}$, and let the distance between two clusterings $dist(C, C')$ be the 
+fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels.  See picture for an example (TODO: include pic).  Two clusterings $C, C'$ are $\epsilon$ close if $dist(C, C') < \epsilon$.
+
+Now, we formalize the earlier assumption:
+
+$S$ satisfies the $(c, \epsilon)$-assumption if \emph{all} clusterings $C$ with $\Phi(C) \leq c~OPT$ are $\epsilon$-close to $C_T$.
+
+A few useful properties:
+
+\begin{itemize}
+
+\item \emph{uniqueness} - This actually doesn't even require the $(c, \epsilon)$ assumption, but merely that two clusterings are $\epsilon$-close.  In this case, if each cluster is of size at least $2n\epsilon$< the minimizing bijection is unique. TODO: why?  Also, is this worth keeping in?
+
+\item Let's imagine that the target clustering $C_T$ that we wanted wasn't even the optimal clustering (satisfying $\Phi = OPT$), but some other clustering.  Then they these two clusterings are $\epsilon$-close.
+
+\item Since $dist$ is a metric, it satisfies the triangle inequality, and therefore any clustering that that is within $(c, \epsilon)$ wrt $C_T$ also satisfies $(c, 2\epsilon)$ of the optimal clustering. (TODO: explain out with math?)
+
+
+
+\end{itemize}
+
+Following this section begins specific analyses of how the $(c, \epsilon)$ assumption leads to efficient algorithms for clustering for three commonly used objective functions ($k$-median, $k$-mean, $k$-min-sum).  However, before that, it's important to understand three very important limitations and implications of this setting.
+
+\begin{enumerate}
+\item $(c, \epsilon)$ properties do not imply $(kc, k\epsilon)$ properties in general for any of the three objective functions we'll analyze here.  To see this, let's look at a counterexample for the $k$-median example (TODO: should I generalize this?).  Let $1 \leq c_1 < c_2 $, and $\epsilon, \alpha > 0$.  Let the target clustering consist of a single cluster with $n(1 - 2\alpha$ points at a single location, and the remaining $k-1$ clusters each with $2\frac{\alpha n}{k-1}$ all at distance $1$ (TODO: draw a picture).  Each point in $C_1$ is greater than $c_2 n$ away from any other cluster.  Note that this clustering has objective $2\alpha n - (k - 1)$, in other words, all but one point in each cluster but $C_1$ contributes $1$ to the objective ($C_1$ contributes nothing since each point lies on the median).  Then, consider an alternate $c_2$ solution which splits $C_1$ into two clusters and merges clusters $C_2$ and $C_3$.  Since $n(\frac{1}{2} - \alpha)$ points from the first cluster are then misclassified (as it was split in two), clearly this has approximation error at least 
+$\frac{1}{n}$ of that, and in fact, strictly greater.  If, in our original setup, we set the distance between points \emph{between} any two clusters to be $D > 1$ (which is defined to give this latter clustering a $c_2 OPT$ objective value).  But then, consider that any $c_1$ approximation cannot merge clusters (TODO: note that c2 was defined as the minimum that has a merging of clusters, can be seen by symmetry)).  error on fewer than $\frac{2\alpha n}{k-1} < \epsilon n$ (TODO: why?). Therefore, this is less than $k$ when we set $\alpha$ (TODO: explain that this defines the family) such that $k > 1 + \frac{2\alpha}{\epsilon} $.
+
+TODO: draw this whole proof.
+
+
+
+\item $c$-approximations under the $(c, \epsilon)$ assumption for $c > 1$ are as hard as finding a $c$-approximation in general. TODO: proof
+
+\item Finally, finding a $c$-approximation under the $(1, \epsilon)$ assumption is NP-Hard. TODO: proof
+
+\end{enumerate}
+
+\section{Stability yields a PTAS for k-Median and k-Means Clustering}
+
+This paper looks at a few statistics about how points are distributed and how it relates to optimal clusterings.  In particular, it studies notions of "stability," which describes bounds on how much adding or removing clusters from a clustering solution changes the objective function's value, and separability, which describes how far away clusters of points are from one another.  By characterizing point sets in terms of these statistics, the authors derive an algorithm for efficiently clustering the points and derive guarantees on the cluster quality, as well as prove its correctness.
+
+\subsection{Introduction}
+TODO: summarize the main contributions of this paper.
+
+\subsection{Definitions}
+The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and obviously $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem, and that $\geq$ sign will almost always be a $>$ sign in practice.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is in some sense \emph{important}.  We define 
+
+\end{document}
