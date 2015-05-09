@@ -21,7 +21,9 @@
 \documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
 
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
-\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+
+
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
 \usepackage[english]{babel} % English language/hyphenation
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
 \usepackage{mathtools}
@@ -48,6 +50,18 @@
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
 
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{amssymb} 
+\usepackage[mathscr]{euscript}
+\usepackage{parskip}
+
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\vecsf}[1]{\textsf{\textbf{#1}}}
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
@@ -73,6 +87,19 @@
 %----------------------------------------------------------------------------------------
 %	PROBLEM 1
 %----------------------------------------------------------------------------------------
+\section{Introduction}
+
+Here we review work done on approximations for clustering algorithms, focusing on the work of \cite{firstpaper} and \cite{secondpaper}. The essential goal is that various data points about objects of interest, we can group those data points by which object they belong to. For example we may have a collection of face images, collect relative low dimensional data about the images, then cluster this data to try to determine images came from the same people by clustering them. However the problem of clustering points given a distance metric in general NP-hard. Additionally analysis of clustering alone does not take into account the relationship between the clusters and the underlying object they belong to. For example even if the images were clustered optimally, that clustering may not correctly group the images by which person's face is in the image. The work here will focus on approximating the underlying object a data point belongs to, using clustering methods.
+
+\subsection{Background}
+
+The algorithm we will focus on is the k-medians algorithm. The k-medians algorithm assumes a space $(X, d)$ for which $X$ is the set of possible points and distance $d : ({ X \choose 2}) \rightarrow R_{\geq 0}$ which satisfies the triangle inequality. We are then given a set of points $S \subset X$. The goal is to label the points in $S$ each into one of k clusters $C_1, C_2, ..., C_k$ with corresponding representative points $c_1, c_2, ..., c_k \in X$. This defines a clustering $\mathcal{C}$. The optimal objective clustering is that which minimizes $\Phi(\mathcal{C}) = \sum\limits_{i = 1}^k \sum_{x \in C_i} d(x, c_i)$.
+
+Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. The \textbf{objective} function $\Phi(\mathcal{C})$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the idealproblem statement the optimal objective clustering $\mathcal{C}^*$ and the optimal target clustering $\mathcal{C}_T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \epsilon)$-property. If a clustering satisfies the $(c, \epsilon)$-property, then for all clusterings where $\Phi(\mathcal{C}) \leq c*\Phi(\mathcal{C}^*)$, $\mathcal{C}$ is also $\epsilon$-close to $\mathcal{C}_T$. By analyzing problems instances where this holds true for some values of $c$ and $\epsilon$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
+
+\subsection{Goals}
+
+
 
 \section{Approximate Clustering Without the Approximation}
 
