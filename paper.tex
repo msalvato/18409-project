@@ -177,11 +177,16 @@ The quantity on the LHS represents the increase in cost, which we know is $ > \a
 
 We show that a k-median cluster with ($1+\alpha, \delta$) stability in which all clusters have size greater than $\delta n$ have $(1+\alpha)$ weak deletion-stability.
 
-We use $C^{(i\rightarrow j)}$ to indicate the clustering obtained by taking all the points in cluster $C_i^*$ and moving them to cluster $C_j^*$. Because every cluster has at least $\delta n$ points, and $C^{(i \rightarrow j)}$ has one fewer cluster than $C^T$ we know the distance from $C^T$ and $C^{(i\rightarrow j)}$ is greater than $\delta$. Therefor the cost of $C^{(i\rightarrow j)}$ is at least $(1 + \alpha)\text{OPT}$.
+We use $C^{(i\rightarrow j)}$ to indicate the clustering obtained by taking all the points in cluster $C_i^*$ and moving them to cluster $C_j^*$. Because every cluster has at least $\delta n$ points, and $C^{(i \rightarrow j)}$ has one fewer cluster than $C^T$ we know the distance from $C^T$ and $C^{(i\rightarrow j)}$ is greater than $\delta$. Therefore the cost of $C^{(i\rightarrow j)}$ is at least $(1 + \alpha)\text{OPT}$.
 
 \subsection{Algorithm}
-TODO:
+First, like in the paper, we'll begin by briefly discussing the intuition of the algorithm.
 
+Let's begin by partitioning our set of clusters into two types.  There are  "cheap" clusters and "expensive" clusters, with the idea being that the expensive clusters contribute a relatively much larger amount than the cheaper clusters; in other words, we have mostly densely packed groups of points, and a few not-so densely packed groups.  The key idea is to assume (and later we prove that the assumption is valid) that the number of expensive clusters is \emph{bounded}.  We then have a method for clustering the cheap point sets, assuming we can partition cheap and expensive points - guess the number of points in the cheap clusters, derive a relationship from the number of points to the radius $r$ of that point set, and then draw balls of radius $r$ around the points in each of those sets.  In order to cluster the expensive points, we then use brute force to guess each of the remaining cluster centers, and since the number of remaining clusters is bounded and small, this brute force operation should not contribute significantly to the runtime.  This all hinges on being able to partition the points into cheap and expensive sets, which arises naturally out of the procedure.  In practice, the algorithm attempts to create a list of possible subsets of points (which could overlap in membership), and iteratively refine that list to create our $k$ clusters.
+
+TODO: verify all this.
+
+Because we assume the clustering is $\beta$-distributed, 
 
 
 \end{document}
