@@ -95,6 +95,8 @@ Here we review work done on approximations for clustering algorithms, focusing o
 
 \subsection{Background}
 
+In order to begin our analysis of clustering, we first define what clustering means exactly, and the relationship it holds to solving an underlying data analysis problem. 
+
 \subsection{k-medians}
 The algorithm we will focus on is the k-medians algorithm. The k-medians algorithm assumes a space $(X, d)$ for which $X$ is the set of possible points and distance $d : ({ X \choose 2}) \rightarrow R_{\geq 0}$ which satisfies the triangle inequality. We are then given a set of points $S \subset X$. The goal is to label the points in $S$ each into one of k clusters $C_1, C_2, ..., C_k$ with corresponding representative points $c_1, c_2, ..., c_k \in X$. This defines a clustering $C$. The optimal objective clustering is that which minimizes $\Phi(C) = \sum\limits_{i = 1}^k \sum_{x \in C_i} d(x, c_i)$.
 
@@ -102,14 +104,13 @@ Let the distance between two clusterings $dist(C, C')$ be the
 fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels, and let $\text{OPT}_\Phi = \Phi(C^*)$
 
 \subsection{($c, \delta$)-property}
-Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. The \textbf{objective} function $\Phi(C)$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the ideal problem statement the optimal objective clustering $C^*$ and the optimal target clustering $C^T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \delta)$-property (alternatively ($c, \delta$) stability)).  If a clustering satisfies the $(c, \delta)$-property, then for all clusterings where $\Phi(C) \leq c*\text{OPT}_\Phi$, $C$ is also $\delta$-close to $C^T$. By analyzing problems instances where this holds true for some values of $c$ and $\delta$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
+Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. The \textbf{objective} function $\Phi(C)$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the ideal problem statement the optimal objective clustering $C^*$ and the optimal target clustering $C^T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \delta)$-property.  If a clustering satisfies the $(c, \delta)$-property, then for all clusterings where $\Phi(C) \leq c*\text{OPT}_\Phi$, $C$ is also $\delta$-close to $C^T$. By analyzing problems instances where this holds true for some values of $c$ and $\delta$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
 
- DO WE NEED THESE? THE LATTER TWO ARE PRETTY MUCH HOW IT'S DEFINED... (I know it's in the paper, I'm not sure I really get why)
- A few useful properties:
+ A couple of useful properties:
 
 \begin{itemize}
 
-\item Let's imagine that the target clustering $C_T$ isn't the optimal clustering (satisfying $\Phi = OPT$), but some other clustering.  Then they these two clusterings are $\delta$-close.
+\item In the case where the target clustering $C^T$ isn't the optimal clustering $C^*$, these two clusterings are $\delta$-close.
 
 \item Since $dist$ is a metric, it satisfies the triangle inequality, and therefore any clustering that that is within $(c, \delta)$ wrt $C_T$ also satisfies $(c, 2\delta)$ of the optimal clustering. %(TODO: explain out with math?) I don't think it's necessary.
 
@@ -153,9 +154,6 @@ The goal of this work is to develop a minimal runtime clustering algorithm with 
 
 This paper looks at a few statistics about how points are distributed and how it relates to optimal clusterings.  In particular, it studies notions of "stability," which describes bounds on how much adding or removing clusters from a clustering solution changes the objective function's value, and separability, which describes how far away clusters of points are from one another.  By characterizing point sets in terms of these statistics, the authors derive an algorithm for efficiently clustering the points and derive guarantees on the cluster quality, as well as prove its correctness.
 
-\subsection{Introduction}
-TODO: summarize the main contributions of this paper.
-
 \subsection{Definitions}
 The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is significant to the solution. Intuitively if this is not the case, then one could reasonably use the ($k-1$) solution in place of the $k$ solution.
 
@@ -171,7 +169,7 @@ In each case, the proof will examine the difference $OPT^{i \rightarrow j} - OPT
 \sum_{x \in C^*_i} (d(x, c^*_j) )  - OPT_i \leq |C^*_i| d(c^*_i, c^*_j)
 \end{align}
 
-The quantity on the LHS represents the increase in cost, which we know is $ > \alpha OPT$ by $(1+\alpha)$-weakly deletion-stability. This means $\alpha OPT < |C^*_i| d(c^*_i, c^*_j)$, or $d(c^*_i, c^*_j) >\frac{\alpha OPT}{|C^*_i|}$.  Then, for any point $p \in C^*_j, d(c^*_i, c^*_j) \leq d(c^*_i, p) + d(c^*_j, p) \leq 2d(c^*_i, p)$. The former inequality is due to the triangle inequality.  Thus, applying this to the previous inequality, we get that $d(c^*_i, p) > \frac{\alpha OPT}{2 |C^*_i|}$; i.e. $\frac{alpha}{2}$ distributed.
+The quantity on the LHS represents the increase in cost, which we know is $ > \alpha OPT$ by $(1+\alpha)$-weakly deletion-stability. This means $\alpha OPT < |C^*_i| d(c^*_i, c^*_j)$, or $d(c^*_i, c^*_j) >\frac{\alpha OPT}{|C^*_i|}$.  Then, for any point $p \in C^*_j, d(c^*_i, c^*_j) \leq d(c^*_i, p) + d(c^*_j, p) \leq 2d(c^*_i, p)$. The former inequality is due to the triangle inequality.  Thus, applying this to the previous inequality, we get that $d(c^*_i, p) > \frac{\alpha OPT}{2 |C^*_i|}$; i.e. $\frac{\alpha}{2}$ distributed.
 
 \subsubsection{Relationship to the $(c, \delta)$-property}
 
