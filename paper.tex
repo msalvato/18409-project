@@ -30,6 +30,8 @@
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage[margin=1.25in]{geometry}
+
 
 \usepackage{sectsty} % Allows customizing section commands
 \allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -93,64 +95,78 @@ Here we review work done on approximations for clustering algorithms, focusing o
 
 \subsection{Background}
 
+\subsection{k-medians}
 The algorithm we will focus on is the k-medians algorithm. The k-medians algorithm assumes a space $(X, d)$ for which $X$ is the set of possible points and distance $d : ({ X \choose 2}) \rightarrow R_{\geq 0}$ which satisfies the triangle inequality. We are then given a set of points $S \subset X$. The goal is to label the points in $S$ each into one of k clusters $C_1, C_2, ..., C_k$ with corresponding representative points $c_1, c_2, ..., c_k \in X$. This defines a clustering $\mathcal{C}$. The optimal objective clustering is that which minimizes $\Phi(\mathcal{C}) = \sum\limits_{i = 1}^k \sum_{x \in C_i} d(x, c_i)$.
 
-Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. The \textbf{objective} function $\Phi(\mathcal{C})$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the idealproblem statement the optimal objective clustering $\mathcal{C}^*$ and the optimal target clustering $\mathcal{C}_T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \epsilon)$-property. If a clustering satisfies the $(c, \epsilon)$-property, then for all clusterings where $\Phi(\mathcal{C}) \leq c*\Phi(\mathcal{C}^*)$, $\mathcal{C}$ is also $\epsilon$-close to $\mathcal{C}_T$. By analyzing problems instances where this holds true for some values of $c$ and $\epsilon$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
+Let the distance between two clusterings $dist(C, C')$ be the 
+fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels, and let $\text{OPT}_\Phi = \Phi(\mathcal{C}^*)$
+
+\subsection{($c, \delta$)-property}
+Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. The \textbf{objective} function $\Phi(\mathcal{C})$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the ideal problem statement the optimal objective clustering $\mathcal{C}^*$ and the optimal target clustering $\mathcal{C}_T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \delta)$-property.  If a clustering satisfies the $(c, \delta)$-property, then for all clusterings where $\Phi(\mathcal{C}) \leq c*\text{OPT}_\Phi$, $\mathcal{C}$ is also $\delta$-close to $\mathcal{C}_T$. By analyzing problems instances where this holds true for some values of $c$ and $\delta$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
+
 
 \subsection{Goals}
 
-
-
-\section{Approximate Clustering Without the Approximation}
-
-
-They key point to this paper is to highlight the fact that, when talking about clustering, most people think of it in terms of minimizing some \emph{objective function} - e.g. minimizing the sum distance to nearby exemplar points (centroids) as in $k$-median clustering.  However, the actual \emph{hope} is that the output labelings produced by such a metric will be in some way "correct" - that is, that points are classified as some \emph{target} clustering up to some permutations of label.  More formally, this means that the hope is that if we find some clustering with an objective within a factor $c$ of the optimal, that we are then \emph{guaranteed} to have some clustering that is bounded by $\epsilon$ in a measure of "incorrectly clustered" points (we will define that measure later).  When we can assume this, we will see that we can derive efficient algorithms and guarantees for finding such $c$-approximation (and thus $\epsilon$ close in classification) clusterings.
-
-\subsection{Introduction}
-
-Spend one to two paragraph summarizing the main contributions and outline of this paper.
-
-TODO: where do approximation algorithms come in?  What are they?  Talk about that here.
-
-\subsection{Definitions}
-As in the paper, we'll begin by defining a few important definitions:
-
-First, let $C$ be a $k$-clustering, a partition of the set of $n$ points $S$ into a a set of subsets $\{C_1, C_2, ...C_k\}$, and let $C_T$ be the target clustering that we wish to find, and $d$ be the distance function between points on our metric space.  Let $\Phi$ be the objective function with minimum value $OPT_{\Phi}$, and let the distance between two clusterings $dist(C, C')$ be the 
-fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels.  See picture for an example (TODO: include pic).  Two clusterings $C, C'$ are $\epsilon$ close if $dist(C, C') < \epsilon$.
-
-Now, we formalize the earlier assumption:
-
-$S$ satisfies the $(c, \epsilon)$-assumption if \emph{all} clusterings $C$ with $\Phi(C) \leq c~OPT$ are $\epsilon$-close to $C_T$.
-
-A few useful properties:
+The goal of this work is to develop a minimal runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{thethingthepapercitesJMS02}. In this review we will show explore the following results:
 
 \begin{itemize}
 
-\item \emph{uniqueness} - This actually doesn't even require the $(c, \epsilon)$ assumption, but merely that two clusterings are $\epsilon$-close.  In this case, if each cluster is of size at least $2n\epsilon$< the minimizing bijection is unique. TODO: why?  Also, is this worth keeping in?
+\item Assume we have a problem with a $(1+\alpha, \delta)$-property, and that all target clusters have size greater than $\delta n$. There exists a PTAS $\delta$-close to the target.
 
-\item Let's imagine that the target clustering $C_T$ that we wanted wasn't even the optimal clustering (satisfying $\Phi = OPT$), but some other clustering.  Then they these two clusterings are $\epsilon$-close.
-
-\item Since $dist$ is a metric, it satisfies the triangle inequality, and therefore any clustering that that is within $(c, \epsilon)$ wrt $C_T$ also satisfies $(c, 2\epsilon)$ of the optimal clustering. (TODO: explain out with math?)
-
-
+\item Assume that the (k-1)-medians optimal cluster is more expensive than the k optimal clustering by a factor of $(1+\alpha)$ where $\alpha > 0$. Then it is possible to achieve a ($1+\epsilon$) approximation to the optimal k-medians in time polynomial in $n$ and $k$, and exponential in $1/\epsilon$ and $1/\alpha$, where $n = |S|$.
 
 \end{itemize}
-
-Following this section begins specific analyses of how the $(c, \epsilon)$ assumption leads to efficient algorithms for clustering for three commonly used objective functions ($k$-median, $k$-mean, $k$-min-sum).  However, before that, it's important to understand three very important limitations and implications of this setting.
-
-\begin{enumerate}
-\item $(c, \epsilon)$ properties do not imply $(kc, k\epsilon)$ properties in general for any of the three objective functions we'll analyze here.  To see this, let's look at a counterexample for the $k$-median example (TODO: should I generalize this?).  Let $1 \leq c_1 < c_2 $, and $\epsilon, \alpha > 0$.  Let the target clustering consist of a single cluster with $n(1 - 2\alpha$ points at a single location, and the remaining $k-1$ clusters each with $2\frac{\alpha n}{k-1}$ all at distance $1$ (TODO: draw a picture).  Each point in $C_1$ is greater than $c_2 n$ away from any other cluster.  Note that this clustering has objective $2\alpha n - (k - 1)$, in other words, all but one point in each cluster but $C_1$ contributes $1$ to the objective ($C_1$ contributes nothing since each point lies on the median).  Then, consider an alternate $c_2$ solution which splits $C_1$ into two clusters and merges clusters $C_2$ and $C_3$.  Since $n(\frac{1}{2} - \alpha)$ points from the first cluster are then misclassified (as it was split in two), clearly this has approximation error at least 
-$\frac{1}{n}$ of that, and in fact, strictly greater.  If, in our original setup, we set the distance between points \emph{between} any two clusters to be $D > 1$ (which is defined to give this latter clustering a $c_2 OPT$ objective value).  But then, consider that any $c_1$ approximation cannot merge clusters (TODO: note that c2 was defined as the minimum that has a merging of clusters, can be seen by symmetry)).  error on fewer than $\frac{2\alpha n}{k-1} < \epsilon n$ (TODO: why?). Therefore, this is less than $k$ when we set $\alpha$ (TODO: explain that this defines the family) such that $k > 1 + \frac{2\alpha}{\epsilon} $.
-
-TODO: draw this whole proof.
-
-
-
-\item $c$-approximations under the $(c, \epsilon)$ assumption for $c > 1$ are as hard as finding a $c$-approximation in general. TODO: proof
-
-\item Finally, finding a $c$-approximation under the $(1, \epsilon)$ assumption is NP-Hard. TODO: proof
-
-\end{enumerate}
+%
+%\section{Approximate Clustering Without the Approximation}
+%
+%
+%They key point to this paper is to highlight the fact that, when talking about clustering, most people think of it in terms of minimizing some \emph{objective function} - e.g. minimizing the sum distance to nearby exemplar points (centroids) as in $k$-median clustering.  However, the actual \emph{hope} is that the output labelings produced by such a metric will be in some way "correct" - that is, that points are classified as some \emph{target} clustering up to some permutations of label.  More formally, this means that the hope is that if we find some clustering with an objective within a factor $c$ of the optimal, that we are then \emph{guaranteed} to have some clustering that is bounded by $\delta$ in a measure of "incorrectly clustered" points (we will define that measure later).  When we can assume this, we will see that we can derive efficient algorithms and guarantees for finding such $c$-approximation (and thus $\delta$ close in classification) clusterings.
+%
+%\subsection{Introduction}
+%
+%Spend one to two paragraph summarizing the main contributions and outline of this paper.
+%
+%TODO: where do approximation algorithms come in?  What are they?  Talk about that here.
+%
+%\subsection{Definitions}
+%As in the paper, we'll begin by defining a few important definitions:
+%
+%First, let $C$ be a $k$-clustering, a partition of the set of $n$ points $S$ into a a set of subsets $\{C_1, C_2, ...C_k\}$, and let $C_T$ be the target clustering that we wish to find, and $d$ be the distance function between points on our metric space.  Let $\Phi$ be the objective function with minimum value $OPT_{\Phi}$, and let the distance between two clusterings $dist(C, C')$ be the 
+%fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels.  See picture for an example (TODO: include pic).  Two clusterings $C, C'$ are $\delta$ close if $dist(C, C') < \delta$.
+%
+%Now, we formalize the earlier assumption:
+%
+%$S$ satisfies the $(c, \delta)$-assumption if \emph{all} clusterings $C$ with $\Phi(C) \leq c~OPT$ are $\delta$-close to $C_T$.
+%
+%A few useful properties:
+%
+%\begin{itemize}
+%
+%\item \emph{uniqueness} - This actually doesn't even require the $(c, \delta)$ assumption, but merely that two clusterings are $\delta$-close.  In this case, if each cluster is of size at least $2n\delta$< the minimizing bijection is unique. TODO: why?  Also, is this worth keeping in?
+%
+%\item Let's imagine that the target clustering $C_T$ that we wanted wasn't even the optimal clustering (satisfying $\Phi = OPT$), but some other clustering.  Then they these two clusterings are $\delta$-close.
+%
+%\item Since $dist$ is a metric, it satisfies the triangle inequality, and therefore any clustering that that is within $(c, \delta)$ wrt $C_T$ also satisfies $(c, 2\delta)$ of the optimal clustering. (TODO: explain out with math?)
+%
+%
+%
+%\end{itemize}
+%
+%Following this section begins specific analyses of how the $(c, \delta)$ assumption leads to efficient algorithms for clustering for three commonly used objective functions ($k$-median, $k$-mean, $k$-min-sum).  However, before that, it's important to understand three very important limitations and implications of this setting.
+%
+%\begin{enumerate}
+%\item $(c, \delta)$ properties do not imply $(kc, k\delta)$ properties in general for any of the three objective functions we'll analyze here.  To see this, let's look at a counterexample for the $k$-median example (TODO: should I generalize this?).  Let $1 \leq c_1 < c_2 $, and $\delta, \alpha > 0$.  Let the target clustering consist of a single cluster with $n(1 - 2\alpha$ points at a single location, and the remaining $k-1$ clusters each with $2\frac{\alpha n}{k-1}$ all at distance $1$ (TODO: draw a picture).  Each point in $C_1$ is greater than $c_2 n$ away from any other cluster.  Note that this clustering has objective $2\alpha n - (k - 1)$, in other words, all but one point in each cluster but $C_1$ contributes $1$ to the objective ($C_1$ contributes nothing since each point lies on the median).  Then, consider an alternate $c_2$ solution which splits $C_1$ into two clusters and merges clusters $C_2$ and $C_3$.  Since $n(\frac{1}{2} - \alpha)$ points from the first cluster are then misclassified (as it was split in two), clearly this has approximation error at least 
+%$\frac{1}{n}$ of that, and in fact, strictly greater.  If, in our original setup, we set the distance between points \emph{between} any two clusters to be $D > 1$ (which is defined to give this latter clustering a $c_2 OPT$ objective value).  But then, consider that any $c_1$ approximation cannot merge clusters (TODO: note that c2 was defined as the minimum that has a merging of clusters, can be seen by symmetry)).  error on fewer than $\frac{2\alpha n}{k-1} < \delta n$ (TODO: why?). Therefore, this is less than $k$ when we set $\alpha$ (TODO: explain that this defines the family) such that $k > 1 + \frac{2\alpha}{\delta} $.
+%
+%TODO: draw this whole proof.
+%
+%
+%
+%\item $c$-approximations under the $(c, \delta)$ assumption for $c > 1$ are as hard as finding a $c$-approximation in general. TODO: proof
+%
+%\item Finally, finding a $c$-approximation under the $(1, \delta)$ assumption is NP-Hard. TODO: proof
+%
+%\end{enumerate}
 
 \section{Stability yields a PTAS for k-Median and k-Means Clustering}
 
@@ -160,19 +176,21 @@ This paper looks at a few statistics about how points are distributed and how it
 TODO: summarize the main contributions of this paper.
 
 \subsection{Definitions}
-The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and obviously $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem, and that $\geq$ sign will almost always be a $>$ sign in practice.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is in some sense \emph{important}.  We define an optimal clustering solution to be $\beta$-distributed for $\beta > 0$ if for any $i$ and any point $x \notin C^i, d(x, c_i) \geq \beta \frac{OPT}{|C_i|}$ ; intuitively, a point outside a given cluster's distance to that cluster's center is sufficiently larger (measured by $\beta$ than the average distance of points within that cluster to its center.  Specifically for this paper, we will focus on the $k$-median case, but analogous logic applies to the $k$-means case as well.   
+The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is significant to the solution. Intuitively if this is not the case, then one could reasonably use the ($k-1$) solution in place of the $k$ solution.
+
+  We define an optimal clustering solution $\mathcal{C}^*$ to be $\beta$-distributed for $\beta > 0$ if for any $i$ and any point $x \notin C^*_i, d(x, c^*_i) \geq \beta \frac{OPT}{|C^*_i|}$. Intuitively, this provides a factor $\beta$ for the distance that each point is from another cluster's center, relative to the average distance a point is from its own cluster center. Specifically for this paper, we will focus on the $k$-median case, but analogous logic applies to the $k$-means case as well.   
 
 Now, we prove that any $(1+\alpha)$-weakly deletion-stable $k$-median instance is $\frac{\alpha}{2}$-distributed,
 
 % and that any $(1+\alpha)$-weakly deletion-stable $k$-mean instance is $\frac{\alpha}{4}$-distributed.
 
-In each case, the proof will examine the difference $OPT^{i \rightarrow j} - OPT$.  Each point $x \in C_i$ contributes $d(x, c_i)$ to $\Phi$, and on deleting $C_i$ and remapping its points to $C_j$, contributes $d(x, c_j)$.  By the triangle inequality, $d(x, c_j) \leq d(x, c_i) + d(c_i, c_j)$.  $d(x, c_j)$ is the contribution of the points that were in $C_i$ to $C_j$ upon deletion.  Thus, the difference in contribution to $\Phi$ is the difference in cost upon swapping the points between the two clusters, which is $ d(x, c_j)  - d(x, c_i) \leq d(c_i, c_j)$.  Summing up over the original cluster $C_i$,
+In each case, the proof will examine the difference $OPT^{i \rightarrow j} - OPT$.  Each point $x \in C^*_i$ contributes $d(x, c^*_i)$ to $\Phi$, and on deleting $C^*_i$ and remapping its points to $C^*_j$, contributes $d(x, c^*_j)$.  By the triangle inequality, $d(x, c^*_j) \leq d(x, c^*_i) + d(c^*_i, c^*_j)$. Thus, the difference in contribution to $\Phi$ is the difference in cost upon swapping the points between the two clusters, which is $ d(x, c^*_j)  - d(x, c^*_i) \leq d(c^*_i, c^*_j)$.  Summing up over the original cluster $C^*_i$,
 
 \begin{align}
-\sum_{k \in C_i} (d(x, c_j) )  - OPT_i \leq |C_i| d(c_i, c_j)
+\sum_{x \in C^*_i} (d(x, c^*_j) )  - OPT_i \leq |C^*_i| d(c^*_i, c^*_j)
 \end{align}
 
-The increase (LHS) is also $ \geq \alpha OPT$ by $(1+\alpha)$-weakly deletion-stability, meaning $\alpha OPT \leq |C_i| d(c_i, c_j)$, or $d(c_i, c_j) \geq \frac{\alpha OPT}{|C_i|}$.  Then, for any point $p \notin C_i, d(c_i, c_j) \leq d(c_i, p) + d(c_j, p)$, and this is $\leq 2d(c_i, p)$ (TODO: why?).  Thus, applying this to the previous inequality, we get that $d(c_i, p) > \frac{\alpha OPT}{2 |C_i|}$; i.e. $\frac{alpha}{2}$ distributed.
+The quantity on the LHS represents the increase in cost, which we know is $ > \alpha OPT$ by $(1+\alpha)$-weakly deletion-stability. This means $\alpha OPT < |C^*_i| d(c^*_i, c^*_j)$, or $d(c^*_i, c^*_j) >\frac{\alpha OPT}{|C^*_i|}$.  Then, for any point $p \in C^*_j, d(c^*_i, c^*_j) \leq d(c^*_i, p) + d(c^*_j, p) \leq 2d(c^*_i, p)$. The former inequality is due to the triangle inequality.  Thus, applying this to the previous inequality, we get that $d(c^*_i, p) > \frac{\alpha OPT}{2 |C^*_i|}$; i.e. $\frac{alpha}{2}$ distributed.
 
 \subsection{Algorithm}
 TODO:
