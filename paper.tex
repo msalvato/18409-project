@@ -214,5 +214,23 @@ We now move into the proof of correctness, and start by proving a useful lemma h
 
 \subsection{Runtime Analysis}
 
+\subsection{Removing the cluster size restriction}
+
+Our analysis up until now has hinged on having all clusters of size at least $\delta n$. When lifting this restriction, there exists an algorithm which is instead $O(\delta/\alpha)$-close to the target, presented in \cite{firstpaper}. Because this proof is fundamentally different than those above, we will only sketch the proof for intuition. 
+
+We define $w(x)$ to be the distance from a point $x$ to it's closest cluster center, and $w_2(x)$ to be the distance to the second closest center. Let $w = \frac{\text{OPT}}{n}$ and $d_crit = 2\frac{\alpha w}{10 \epsilon}$. Let $X_i$ be the set of all points in $C_i^*$ for which $w(x) < d_crit$ and $w_2(x) - w(x) \geq 5d_crit$. Intuitively the points in $X_i$ are those which are strongly in $C_i^*$, and so moving them to the second closest cluster is expensive.
+
+A \textbf{threshold graph} $G_\tau = (S, E_\tau)$ to be that which has all pairs of points $(x, y)$ connected if $d(x, y) \leq \tau$. For a problem satisfying the $(1 + \alpha, \epsilon)$-property, set $\tau = 2d_{crit}$. This graph has the following properties:
+
+\begin{itemize}
+\item For all $x, y \in X_i$, $(x,y) \in E(G_\tau)$. That is, if two points are both much closer to one center than any other, they will have an edge in this graph.
+
+\item If $x \in X_i$ and $y \in X_{j \neq i}$, the $(x,y) \notin E(G_\tau)$, and they share no neighbors. That is, if two points are tightly bound each to different clusters, they will not share edges in the threshold graph. 
+
+The algorithm, taken directly from \cite{firstpaper} is: *algorithm, I'll format it like you do*
+
+As $w$ may not be known directly, running this algorithm on a $\gamma$-approximation of $w$ gives a $O(\gamma\delta/\alpha)$ approximation of the optimal clustering. As noted above, for sake of brevity we exclude the proof for this algorithm. However intuitively the threshold graph groups points into cliques,. By virtue of how the graph was created, we guarantee that when a cluster is selected from the graph, only a bounded number of possibly incorrect points can be added to that cluster. Additionally total number of points that were in a clique which belonged to a different cluster is bounded, so the final cluster also has bounded error. 
+
+\end{itemize}
 
 \end{document}
