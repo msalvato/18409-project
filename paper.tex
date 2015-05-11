@@ -64,6 +64,9 @@
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\vecsf}[1]{\textsf{\textbf{#1}}}
 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
@@ -212,7 +215,33 @@ In this stage, we continually select candidates of $k$ components from $Q$.  For
 \subsection{Proof of Correctness}
 
 \subsubsection{Bounds on Components of Cheap Clusters}
-We now move into the proof of correctness, and start by proving a useful lemma here.  As mentioned before, our goal is to find lists of \emph{components}, or subsets of points, from which we hope we can derive our clusters.  We now show that, if we bound
+We now move into the proof of correctness, and the paper starts by proving a useful lemma for proving the correctness of the population stage.  In this section, we only consider operations on clusters $C_i$ which are cheap at early steps such that $s \geq |C_i|$.  We prove two useful facts.
+
+\begin{lemma}
+Any component $T$ added in step $s$ does not contain any point $z$ such that $\frac{\beta OPT}{2 C_i} \leq  d(c_i, z) \leq \frac{3 \beta OPT}{4 C_i}$.
+\label{lemma:4.2a}
+\end{lemma}
+
+\begin{proof}
+By contradiction - assume that the distance of $z$ does fall within this range.  In the algorithm, the $r = \frac{\beta OPT}{4 s}$, and because of the bound we imposed on $s$, $r = \frac{\beta OPT}{4 |C_i|}$.  Let $p$ be a point within $r$ of $z$.  If $p$ is part of $C_i$ but falls outside of the inner ring (we'll show these two facts soon), and $T$ is added to $Q$, then by step d), it must be that $T$, which is in the ball $r$ of $z$ by step c), has more than $\frac{s}{2}$, and therefore more than $\frac{C_i}{2}$ points.  But, this is a contradiction, since more than half (at least $1 - \frac{\epsilon}{3}$) the points of any inner ring must fall \emph{within} the inner ring, not outside the inner ring, as it would here.
+
+Now, we show that $p$ is part of $C_i$ and falls outside the inner ring, completing the proof.  
+
+First, $p$ is part of $C_i$.  Since $d(c_i, z) \geq \frac{\beta OPT}{2 |C_i|}$ and $d(z, p) \leq r \leq \frac{\beta OPT}{4 |C_i|}$, then by the triangle inequality, $d(c_i, p) \geq d(c_i, z) - d(z, p) \geq \frac{\beta OPT}{4 |C_i|}$, which means that $p$ belongs to $C_i$ since our clustering is $\beta$-distributed.
+
+Second, $p$ falls outside the inner ring.  Since $d(c_i, z) \leq \frac{3 \beta OPT}{4 |C_i|}$ and, still, $d(z, p) \leq r \leq \frac{\beta OPT}{4 |C_i|}$, by the triangle inequality, $d(c_i, p) \leq d(c_i, z) + d(z, p) \leq \frac{\beta OPT}{|C_i|}$.  Thus, by the definition of an outer ring, $p$ must fall \emph{outside} it.
+
+\end{proof}
+
+\begin{lemma}
+Given the same preconditions, $T$ cannot contain a pair of points $(p_1, p_2)$ such that $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.
+\end{lemma}
+
+\begin{proof}
+Proof by contradiction.  Assume this did not hold.  Since we assume that $T$ is a connected component, there's a path from $p_1$ to $p_2$.  By step $c$ in the algorithm, two points are only connected if their distance is at most $r = \frac{\beta OPT}{4s} \leq \frac{\beta OPT}{4|C_i|}$ (the inequality following from our bound assumption on $s$ and $|C_i|$).  Then, since we assumed this lemma did not hold, $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.  This means there can be a point that falls within that range along the connected path, which would contradict lemma \ref{lemma:4.2a}.
+\end{proof}
+
+Combined, these two lemmas state that every point in a component either lies relatively far (more than $\frac{4 \beta OPT}{3 |C_i|}$ )to $c_i$ or very close to $c_i$ (within $\frac{\beta OPT}{2 |C_i|}$).  TODO: is this accurate?
 
 \subsection{Runtime Analysis}
 
