@@ -214,7 +214,7 @@ In this stage, we continually select candidates of $k$ components from $Q$.  For
 
 \subsection{Proof of Correctness}
 
-\subsubsection{Bounds on Components of Cheap Clusters}
+\subsubsection{Points in components are either close or far to their centers}
 We now move into the proof of correctness, and the paper starts by proving a useful lemma for proving the correctness of the population stage.  In this section, we only consider operations on clusters $C_i$ which are cheap at early steps such that $s \geq |C_i|$.  We prove two useful facts.
 
 \begin{lemma}
@@ -235,6 +235,7 @@ Second, $p$ falls outside the inner ring.  Since $d(c_i, z) \leq \frac{3 \beta O
 
 \begin{lemma}
 Given the same preconditions, $T$ cannot contain a pair of points $(p_1, p_2)$ such that $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.
+\label{lemma:4.2b}
 \end{lemma}
 
 \begin{proof}
@@ -242,6 +243,14 @@ Proof by contradiction.  Assume this did not hold.  Since we assume that $T$ is 
 \end{proof}
 
 Combined, these two lemmas state that every point in a component either lies relatively far (more than $\frac{4 \beta OPT}{3 |C_i|}$ )to $c_i$ or very close to $c_i$ (within $\frac{\beta OPT}{2 |C_i|}$).  TODO: is this accurate?
+
+\subsubsection{Points in inner rings are quickly added for each cluster}
+
+Here we show that for each cluster $C_i$, $Q$ will always contain a component $T'$ with a point from the inner ring of $C_i$ by step $s = |C_i|$.
+
+To see why this is the case, assume that we are at step $s$ and the algorithm has not yet inserted some $T'$ yet.  There are two possible things that could happen here.  Either that component might be added at step $s$ (in which case we're done), or it could be that the point the algorithm would add has been removed by some other step.  What we need to prove is that even if an inner ring point is removed, the algorithm will still add a different inner ring point at this step.
+
+Assume for contradiction's sake that no other inner ring point for $C_i$ is added at or before step $s$, and let $s' \geq |C_i|$ (remember we are counting \emph{backwards}) be the step at which the original inner ring point (call it $x$) were removed.  Then if this point were removed it's due to step b), and it was removed because there already exists a point (call it $y$) in a component in $Q$ within $2r = \frac{\beta OPT}{2s'} \leq \frac{\beta OPT}{2|C_i|}$ of this $x$.  Then, by the triangle inequality, since we also know that $d(c_i, x) \leq \frac{\beta OPT}{8 |C_i|}$ since it's an inner ring point,  $d(c_i, y) \leq d(c_i, x) + d(x, y) \leq \frac{\beta OPT}{2s} + \frac{\beta OPT}{8 |C_i|} \leq \frac{5 \beta OPT}{8 |C_i|}$.  Now, let $s''$ be the step at which $T''$, the component which held $y$ was inserted.  We know that $d(c_i, y) < \frac{\beta OPT}{2 |C_i|}$ (TODO: why?  I don't understand that).  By step d) in the algorithm, $T''$ must be of at least size $\frac{s''}{2}$ and thus at least size $\frac{|C_i|}{2}$, but by our assumption (for contradiction) does not contain a single inner ring point on $C_i$.  Then, since we know at least half of a cheap cluster should belong to its inner ring, all of the points in $T''$ can't be in $C_i$ and so at least one point (say, $w$) must be in some $C_j~i \neq j$.  By $\beta$ distribution, $d(c_i, w) > \frac{\beta OPT}{|C_i|}$, but by \ref{lemma:4.2b}, we can't have this far $w$ and close $y$ both in $T''$.  Thus we have a contradiction, and so a different inner ring point than $x$ must have already been added.
 
 \subsection{Runtime Analysis}
 
