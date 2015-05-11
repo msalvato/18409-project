@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+\documentclass[paper=a4, fontsize=10.5pt]{scrartcl} % A4 paper and 11pt font size
 
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 
@@ -183,14 +183,16 @@ We use $C^{(i\rightarrow j)}$ to indicate the clustering obtained by taking all 
 \subsubsection{Inner Ring}
 
 
-Define a \emph{cheap cluster} as one where $OPT_i \leq \frac{\beta \epsilon OPT}{32}$, meaning it's less than $\frac{32}{\beta \epsilon}$ of $OPT$.  Let the \emph{inner ring} of $C_i$ be the set of points $x$ such that $d(x, c_i) \leq \frac{ \beta OPT }{8 |C_i|}$.  If $C_i$ is cheap, then no more than $\frac{\epsilon}{4}$ points reside outside its inner ring.  By contradiction, assume that more than $\frac{\epsilon}{4}$ fraction of points exist outside of the inner ring.  $OPT_i > (points outside inner ring) * (cost of points)$, and the first term in that product is lower bounded by $\frac{\epsilon |C_i|}{4}$ and that second term is lower bounded by $\frac{\beta OPT}{8 |C_i|}$.  Thus, $OPT_i > \frac{\beta \epsilon OPT }{32}$.  But all cheap clusters have cost less than $\frac{\beta \epsilon OPT}{32}$, so we have a contradiction, and thus cheap clusters only have at most $\frac{\epsilon}{4}$ points outside their inner rings.
+Define a \emph{cheap cluster} $C_i$ as one where $OPT_i \leq \frac{\beta \epsilon OPT}{32}$.  Let the \emph{inner ring} of $C_i$ be the set of points $x$ such that $d(x, c_i) \leq \frac{ \beta OPT }{8 |C_i|}$.  If $C_i$ is cheap, then no more than $\frac{\epsilon}{4}$ points reside outside its inner ring.  By contradiction, assume that more than $\frac{\epsilon}{4}$ fraction of points exist outside of the inner ring.  $OPT_i > (\text{points outside inner ring}) * (\text{cost of points})$, and the first term in that product is lower bounded by $\frac{\epsilon |C_i|}{4}$ and that second term is lower bounded by $\frac{\beta OPT}{8 |C_i|}$.  Thus, $OPT_i > \frac{\beta \epsilon OPT }{32}$.  But all cheap clusters have cost less than $\frac{\beta \epsilon OPT}{32}$, so we have a contradiction, and thus cheap clusters only have at most $\frac{\epsilon}{4}$ points outside their inner rings.
 
-TODO: what on Earth does Markov's inequality have to do with this?  Is this a typo in the paper?
+%TODO: what on Earth does Markov's inequality have to do with this?  Is this a typo in the paper?
+
+%Yeah i have no idea... what you said seems uhh... pretty straightfoward
 
 \subsection{Algorithm}
-First, like in the paper, we'll begin by briefly discussing the intuition of the $(1 + \epsilon)$ approximation algorithm.
+We'll begin by briefly discussing the intuition of the $(1 + \epsilon)$ approximation algorithm.
 
-Let's begin by partitioning our set of clusters into two types.  There are  "cheap" clusters and "expensive" clusters, with the idea being that the expensive clusters contribute a relatively much larger amount than the cheaper clusters; in other words, we have mostly densely packed groups of points, and a few not-so densely packed groups.  The key idea is to assume (and later we prove that the assumption is valid) that the number of expensive clusters is \emph{bounded}.  We then have a method for clustering the cheap point sets, assuming we can partition cheap and expensive points - guess the number of points in the cheap clusters, derive a relationship from the number of points to the radius $r$ of that point set, and then draw balls of radius $r$ around the points in each of those sets.  In order to cluster the expensive points, we then use brute force to guess each of the remaining cluster centers, and since the number of remaining clusters is bounded and small, this brute force operation should not contribute significantly to the runtime.  This all hinges on being able to partition the points into cheap and expensive sets, which arises naturally out of the procedure.  In practice, the algorithm attempts to create a list of possible subsets of points (which could overlap in membership), and iteratively refine that list to create our $k$ clusters. 
+Let's begin by partitioning our set of clusters into two types.  There are  "cheap" clusters and "expensive" clusters, with the idea being that the expensive clusters contribute a larger amount to the cost than the cheaper clusters; in other words, we have mostly densely packed groups of points, and a few not-so densely packed groups.  The key idea is to assume (and later we prove) that the number of expensive clusters is \emph{bounded}.  We then have a method for clustering the cheap point sets, assuming we can partition cheap and expensive points: guess the number of points in the cheap clusters, derive a relationship from the number of points to the radius $r$ of that point set, and then draw balls of radius $r$ around the points in each of those sets.  In order to cluster the expensive points, we then use brute force to guess each of the remaining cluster centers, and since the number of remaining clusters is bounded and small, this brute force operation should not contribute significantly to the runtime.  This all hinges on being able to partition the points into cheap and expensive sets, which arises naturally out of the procedure.  In practice, the algorithm attempts to create a list of possible subsets of points (which could overlap in membership), and iteratively refine that list to create our $k$ clusters. 
 
 
 
@@ -198,13 +200,14 @@ We provide the algorithm in fig (TODO), and give a very high level overview of t
 
 First, the "Population stage."  We assume that we have some initial list $Q_{init}$ of graphs $\{T_i\}$ which is just the centers of the expensive clusters (i.e. one point per $T_i$).  Let $n$ be the number of datapoints.  We will count backwards (counter $s$) from $s=n$ down to $1$, i.e. once for each datapoint.
 
-Now, Let $d(x, Q)$ be the distance from point $x$ to any point in any of the components in $Q$.  Now, let $r = \frac{\beta OPT}{4 s}$, where $r$ is the aforementioned ball radii; in other words, we're attempting to slowly grow the ball sizes with each iteration.  If a point is within $2r$ of $Q$, we remove it. Then, we loop again over each remaining point.
+Now, let $d(x, Q)$ be the minimum distance from point $x$ to any point in any of the components in $Q$.  Now, let $r = \frac{\beta OPT}{4 s}$, where $r$ is the aforementioned ball radii; in other words, we're attempting to slowly grow the ball sizes with each iteration.  If a point is within $2r$ of $Q$, we remove it. Then, we loop again over each remaining point.
 
 For each point $x$, look only at the set of points within $r$ of that point (including $x$ itself), and call this $B$.  Then, for each pair $(a, b)$ of points in $B$, we connect them if their distance is bounded by $r$ and if there are at least $\frac{s}{2}$ points in $B$ distance $r$ from both $a$ and $b$.
 
 Finally, for each connected component that results this way, add it to $Q$ if it has at least $\frac{s}{2}$ points, and remove all the points of distance $2r$ from this component.  This ends the population stage.
 
-TODO: What happens to the "removed" points?
+%TODO: What happens to the "removed" points?
+%Nothing, they just aren't possible candidates for cluster centers.
 
 At the end of the population stage, we have a collection of connected components in $Q$ from which we derive clusters, in the "Centers-Retrieving stage."
 
@@ -213,7 +216,7 @@ In this stage, we continually select candidates of $k$ components from $Q$.  For
 \subsection{Proof of Correctness}
 
 \subsubsection{Points in components are either close or far to their centers}
-We now move into the proof of correctness, and the paper starts by proving a useful lemma for proving the correctness of the population stage.  In this section, we only consider operations on clusters $C_i$ which are cheap at early steps such that $s \geq |C_i|$.  We prove two useful facts.
+We now move into the proof of correctness, and the paper starts by proving a useful lemma for the correctness of the population stage.  In this section, we only consider operations on clusters $C_i$ which are cheap at early steps such that $s \geq |C_i|$.  We prove two useful facts.
 
 \begin{lemma}
 Any component $T$ added in step $s$ does not contain any point $z$ such that $\frac{\beta OPT}{2 C_i} \leq  d(c_i, z) \leq \frac{3 \beta OPT}{4 C_i}$.
@@ -221,13 +224,13 @@ Any component $T$ added in step $s$ does not contain any point $z$ such that $\f
 \end{lemma}
 
 \begin{proof}
-By contradiction - assume that the distance of $z$ does fall within this range.  In the algorithm, the $r = \frac{\beta OPT}{4 s}$, and because of the bound we imposed on $s$, $r = \frac{\beta OPT}{4 |C_i|}$.  Let $p$ be a point within $r$ of $z$.  If $p$ is part of $C_i$ but falls outside of the inner ring (we'll show these two facts soon), and $T$ is added to $Q$, then by step d), it must be that $T$, which is in the ball $r$ of $z$ by step c), has more than $\frac{s}{2}$, and therefore more than $\frac{C_i}{2}$ points.  But, this is a contradiction, since more than half (at least $1 - \frac{\epsilon}{3}$) the points of any inner ring must fall \emph{within} the inner ring, not outside the inner ring, as it would here.
+By contradiction - assume that the distance of $z$ does fall within this range.  In the algorithm, $r = \frac{\beta OPT}{4 s}$, and because of the bound we imposed on $s$, $r = \frac{\beta OPT}{4 |C_i|}$.  Let $p$ be a point such that $d(p, z) < r$.  If $p$ is part of $C_i$ but falls outside of the inner ring (we'll show these two facts soon), and $T$ is added to $Q$, then by step d), it must be that $T$, which is in the ball $r$ of $z$ by step c), has more than $\frac{s}{2}$, and therefore more than $\frac{C_i}{2}$ points.  But, this is a contradiction, since more than half (at least $1 - \frac{\epsilon}{3}$) the points of any inner ring must fall \emph{within} the inner ring, not outside the inner ring, as it would here.
 
 Now, we show that $p$ is part of $C_i$ and falls outside the inner ring, completing the proof.  
 
-First, $p$ is part of $C_i$.  Since $d(c_i, z) \geq \frac{\beta OPT}{2 |C_i|}$ and $d(z, p) \leq r \leq \frac{\beta OPT}{4 |C_i|}$, then by the triangle inequality, $d(c_i, p) \geq d(c_i, z) - d(z, p) \geq \frac{\beta OPT}{4 |C_i|}$, which means that $p$ belongs to $C_i$ since our clustering is $\beta$-distributed.
+First, $p$ is part of $C_i$.  Since $d(c_i, z) \leq \frac{3 \beta OPT}{4 |C_i|}$ and, still, $d(z, p) < r \leq \frac{\beta OPT}{4 |C_i|}$, by the triangle inequality, $d(c_i, p) \leq d(c_i, z) + d(z, p) < \frac{\beta OPT}{|C_i|}$, which means that $p$ belongs to $C_i$ since our clustering is $\beta$-distributed.
 
-Second, $p$ falls outside the inner ring.  Since $d(c_i, z) \leq \frac{3 \beta OPT}{4 |C_i|}$ and, still, $d(z, p) \leq r \leq \frac{\beta OPT}{4 |C_i|}$, by the triangle inequality, $d(c_i, p) \leq d(c_i, z) + d(z, p) \leq \frac{\beta OPT}{|C_i|}$.  Thus, by the definition of an outer ring, $p$ must fall \emph{outside} it.
+Second, $p$ falls outside the inner ring.  Since $d(c_i, z) \geq \frac{\beta OPT}{2 |C_i|}$ and $d(z, p) < r \leq \frac{\beta OPT}{4 |C_i|}$, then by the triangle inequality, $d(c_i, p) \geq d(c_i, z) - d(z, p) > \frac{\beta OPT}{4 |C_i|}$. Thus, by the definition of an outer ring, $p$ must fall \emph{outside} it.
 
 \end{proof}
 
@@ -237,10 +240,17 @@ Given the same preconditions, $T$ cannot contain a pair of points $(p_1, p_2)$ s
 \end{lemma}
 
 \begin{proof}
-Proof by contradiction.  Assume this did not hold.  Since we assume that $T$ is a connected component, there's a path from $p_1$ to $p_2$.  By step $c$ in the algorithm, two points are only connected if their distance is at most $r = \frac{\beta OPT}{4s} \leq \frac{\beta OPT}{4|C_i|}$ (the inequality following from our bound assumption on $s$ and $|C_i|$).  Then, since we assumed this lemma did not hold, $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.  This means there can be a point that falls within that range along the connected path, which would contradict lemma \ref{lemma:4.2a}.
+Proof by contradiction.  Assume this did not hold.  Since we assume that $T$ is a connected component, there's a path from $p_1$ to $p_2$.  By step $c$ in the algorithm, two points are only connected if their distance is at most $r = \frac{\beta OPT}{4s} \leq \frac{\beta OPT}{4|C_i|}$.
+
+However by triangle inequality $d(p_1, p_2) \geq d(p_2, c_i) - d(p_1, c_i) \geq \frac{5\beta OPT}{6|C_i|} \geq \frac{\beta OPT}{4|C_i|}$, leading to a contradiction. 
+
+%  Then, since we assumed this lemma did not hold, $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.  This means there can be a point that falls within that range along the connected path, which would contradict lemma \ref{lemma:4.2a}.
 \end{proof}
 
-Combined, these two lemmas state that every point in a component either lies relatively far (more than $\frac{4 \beta OPT}{3 |C_i|}$ )to $c_i$ or very close to $c_i$ (within $\frac{\beta OPT}{2 |C_i|}$).  TODO: is this accurate?
+Combined, these two lemmas state that every point in a component either lies relatively far (more than $\frac{4 \beta OPT}{3 |C_i|}$ )to $c_i$ or very close to $c_i$ (within $\frac{\beta OPT}{2 |C_i|}$).  
+
+%TODO: is this accurate?
+%Lemma 2.1 had a couple of clear bugs (proofs for inner ring and part of C_i were reversed) Reread 2.2 and see if I what I said made sense?
 
 \subsubsection{Points in inner rings are quickly added for each cluster}
 
@@ -248,7 +258,10 @@ Here we show that for each cluster $C_i$, $Q$ will always contain a component $T
 
 To see why this is the case, assume that we are at step $s$ and the algorithm has not yet inserted some $T'$ yet.  There are two possible things that could happen here.  Either that component might be added at step $s$ (in which case we're done), or it could be that the point the algorithm would add has been removed by some other step.  What we need to prove is that even if an inner ring point is removed, the algorithm will still add a different inner ring point at this step.
 
-Assume for contradiction's sake that no other inner ring point for $C_i$ is added at or before step $s$, and let $s' \geq |C_i|$ (remember we are counting \emph{backwards}) be the step at which the original inner ring point (call it $x$) were removed.  Then if this point were removed it's due to step b), and it was removed because there already exists a point (call it $y$) in a component in $Q$ within $2r = \frac{\beta OPT}{2s'} \leq \frac{\beta OPT}{2|C_i|}$ of this $x$.  Then, by the triangle inequality, since we also know that $d(c_i, x) \leq \frac{\beta OPT}{8 |C_i|}$ since it's an inner ring point,  $d(c_i, y) \leq d(c_i, x) + d(x, y) \leq \frac{\beta OPT}{2s} + \frac{\beta OPT}{8 |C_i|} \leq \frac{5 \beta OPT}{8 |C_i|}$.  Now, let $s''$ be the step at which $T''$, the component which held $y$ was inserted.  We know that $d(c_i, y) < \frac{\beta OPT}{2 |C_i|}$ (TODO: why?  I don't understand that).  By step d) in the algorithm, $T''$ must be of at least size $\frac{s''}{2}$ and thus at least size $\frac{|C_i|}{2}$, but by our assumption (for contradiction) does not contain a single inner ring point on $C_i$.  Then, since we know at least half of a cheap cluster should belong to its inner ring, all of the points in $T''$ can't be in $C_i$ and so at least one point (say, $w$) must be in some $C_j~i \neq j$.  By $\beta$ distribution, $d(c_i, w) > \frac{\beta OPT}{|C_i|}$, but by \ref{lemma:4.2b}, we can't have this far $w$ and close $y$ both in $T''$.  Thus we have a contradiction, and so a different inner ring point than $x$ must have already been added.
+Assume for contradiction's sake that no other inner ring point for $C_i$ is added at or before step $s$, and let $s' \geq |C_i|$ (remember we are counting \emph{backwards}) be the step at which the original inner ring point (call it $x$) were removed.  Then if this point were removed it's due to step b), and it was removed because there already exists a point (call it $y$) in a component in $Q$ within $2r = \frac{\beta OPT}{2s'} \leq \frac{\beta OPT}{2|C_i|}$ of this $x$.  Then, by the triangle inequality, since we also know that $d(c_i, x) \leq \frac{\beta OPT}{8 |C_i|}$ since it's an inner ring point,  $d(c_i, y) \leq d(c_i, x) + d(x, y) \leq \frac{\beta OPT}{2s} + \frac{\beta OPT}{8 |C_i|} \leq \frac{5 \beta OPT}{8 |C_i|}$.  Now, let $s''$ be the step at which $T''$, the component which held $y$ was inserted.  We know that $d(c_i, y) < \frac{\beta OPT}{2 |C_i|}$   By step d) in the algorithm, $T''$ must be of at least size $\frac{s''}{2}$ and thus at least size $\frac{|C_i|}{2}$, but by our assumption (for contradiction) does not contain a single inner ring point on $C_i$.  Then, since we know at least half of a cheap cluster should belong to its inner ring, all of the points in $T''$ can't be in $C_i$ and so at least one point (say, $w$) must be in some $C_j~i \neq j$.  By $\beta$ distribution, $d(c_i, w) > \frac{\beta OPT}{|C_i|}$, but by \ref{lemma:4.2b}, we can't have this far $w$ and close $y$ both in $T''$.  Thus we have a contradiction, and so a different inner ring point than $x$ must have already been added.
+
+%(TODO: why?  I don't understand that).
+% if it's within frac{\beta OPT}{2|C_i|} of some x, and that x is within frac{\beta OPT}{8|C_i|}  of the center, by triangle inequality the thing you were quesitoning holds. 
 
 \subsection{Runtime Analysis}
 
