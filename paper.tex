@@ -218,6 +218,8 @@ In this stage, we continually select candidates of $k$ components from $Q$.  For
 
 \subsection{Proof of Correctness}
 
+TODO: dscribe how we assume OPT is known and why that's valid.
+
 \subsubsection{Points in components are either close or far to their centers}
 We now move into the proof of correctness, and the paper starts by proving a useful lemma for the correctness of the population stage.  In this section, we only consider operations on clusters $C^*_i$ which are cheap at early steps such that $s \geq |C^*_i|$.  We prove two useful facts.
 
@@ -267,6 +269,12 @@ Assume for contradiction's sake that no other inner ring point for $C^*_i$ is ad
 % if it's within frac{\beta OPT}{2|C_i|} of some x, and that x is within frac{\beta OPT}{8|C_i|}  of the center, by triangle inequality the thing you were quesitoning holds. 
 
 \subsection{Runtime Analysis}
+
+Step 2) in the algorithm is run $n$ times.  For each of those $n$ runs, we loop, potentially, over all $n$  points (2 c)), and then as we look for potentially connecting points, we loop over all $n$  points again (this happens similarly in d)), leading to $O(n^3)$ iterations.  Step 2) overall is dominated by the $O(n^3)$ time factor.
+
+Step 3) iterates over $k^{O(\frac{1}{\beta})}$ cluster guesses, and for each of these is a simple $n^2$ procedure to find the cluster centers (iterating potentially over each point $p$, and then iterating over potentially each other point to calculate statistics to determine if $p$ is the median)  (3 b).  Subsequently, step 3 measures the cost of each of the resulting clusters, which takes $O(nk)$ time (iterate over $k$ potential clusters.  For each, iterate over up to $n$ points).  Thus, step 3) takes $O(n^2 + nk)$ iterations for each guess of $k$ components.  We need to do this $k^{O(\frac{1}{\beta})}$ times, making the runtime for step 3 $O((n^2 + nk)k^{O(\frac{1}{\beta})})$
+
+Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O((n^2 + nk)k^{O(\frac{1}{\beta})}n^{O(\frac{1}{\beta e})})$ which is polynomial.
 
 \subsection{Removing the cluster size restriction}
 
