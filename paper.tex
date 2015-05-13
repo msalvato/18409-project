@@ -274,7 +274,7 @@ Step 2) in the algorithm is run $n$ times.  For each of those $n$ runs, we loop,
 
 Step 3) iterates over $k^{O(\frac{1}{\beta})}$ cluster guesses, and for each of these is a simple $n^2$ procedure to find the cluster centers (iterating potentially over each point $p$, and then iterating over potentially each other point to calculate statistics to determine if $p$ is the median)  (3 b).  Subsequently, step 3 measures the cost of each of the resulting clusters, which takes $O(nk)$ time (iterate over $k$ potential clusters.  For each, iterate over up to $n$ points).  Thus, step 3) takes $O(n^2 + nk)$ iterations for each guess of $k$ components.  We need to do this $k^{O(\frac{1}{\beta})}$ times, making the runtime for step 3 $O((n^2 + nk)k^{O(\frac{1}{\beta})})$
 
-Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O((n^2 + nk)k^{O(\frac{1}{\beta})}n^{O(\frac{1}{\beta e})})$ which is polynomial.
+Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O(((n^2 + nk)k^{O(\frac{1}{\beta})}+n^3)n^{O(\frac{1}{\beta e})})$ which is polynomial.
 
 \subsection{Removing the cluster size restriction}
 
