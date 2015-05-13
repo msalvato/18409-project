@@ -94,11 +94,11 @@
 %----------------------------------------------------------------------------------------
 \section{Introduction}
 
-Here we review work done on approximations for clustering algorithms, focusing on the work of \cite{firstpaper} and \cite{secondpaper}. The essential goal is that various data points about objects of interest, we can group those data points by which object they belong to. For example we may have a collection of face images, collect relative low dimensional data about the images, then cluster this data to try to determine images came from the same people by clustering them. However the problem of clustering points given a distance metric in general NP-hard. Additionally analysis of clustering alone does not take into account the relationship between the clusters and the underlying object they belong to. For example even if the images were clustered optimally, that clustering may not correctly group the images by which person's face is in the image. The work here will focus on approximating the underlying object a data point belongs to, using clustering methods.
+Here we review work done on approximations for clustering algorithms, focusing on the work of \cite{firstpaper} and \cite{secondpaper}. The essential goal is that for various data points about objects of interest, we can group those data points by which object they belong to. For example we may have a collection of face images, collect a relatively low dimensional datapoint (feature vector) for each image, and then cluster this data to try to determine whether images came from the same people (each cluster corresponding to a distinct person). However the problem of clustering points given a distance metric is in general NP-hard. Additionally, analysis of clustering alone does not take into account the relationship between the clusters and the underlying object they belong to. For example, even if the images were clustered optimally, according to some objective function, that clustering may not correctly group the images by which person's face is in the image if the choice of objective function were not a perfect match for the problem. The work here will focus on algorithms for approximating correct clustering.
 
 \subsection{Background}
 
-In order to begin our analysis of clustering, we first define what clustering means exactly, and the relationship it holds to solving an underlying data analysis problem. 
+In order to begin our analysis of clustering, we first define what clustering means exactly, and the relationship it holds in solving an underlying data analysis problem. 
 
 \subsection{k-medians}
 The algorithm we will focus on is the k-medians algorithm. The k-medians algorithm assumes a space $(X, d)$ for which $X$ is the set of possible points and distance $d : ({ X \choose 2}) \rightarrow R_{\geq 0}$ which satisfies the triangle inequality. We are then given a set of points $S \subset X$. The goal is to label the points in $S$ each into one of k clusters $C_1, C_2, ..., C_k$ with corresponding representative points $c_1, c_2, ..., c_k \in X$. This defines a clustering $C$. The optimal objective clustering is that which minimizes $\Phi(C) = \sum\limits_{i = 1}^k \sum_{x \in C_i} d(x, c_i)$.
@@ -107,7 +107,10 @@ Let the distance between two clusterings $dist(C, C')$ be the
 fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels, and let $\text{OPT}_\Phi = \Phi(C^*)$
 
 \subsection{($c, \delta$)-property}
-Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. The \textbf{objective} function $\Phi(C)$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the ideal problem statement the optimal objective clustering $C^*$ and the optimal target clustering $C^T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \delta)$-property.  If a clustering satisfies the $(c, \delta)$-property, then for all clusterings where $\Phi(C) \leq c*\text{OPT}_\Phi$, $C$ is also $\delta$-close to $C^T$. By analyzing problems instances where this holds true for some values of $c$ and $\delta$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
+Thus far we have only addressed clustering based on the data points, but not the underlying objectives interest. TODO: Andy note: that's not true, we just talked about the objective above...
+
+
+The \textbf{objective} function $\Phi(C)$ is the cost of a clustering based only on the distance between points. However the optimal \textbf{target} clustering is that which partitions the points best based on the underlying objects the data points are drawn from. In the ideal problem statement the optimal objective clustering $C^*$ and the optimal target clustering $C^T$ are the same. However in practice this is not usually the case. In order to be able to perform analysis on the quality of a clustering \cite{firstpaper} define the $(c, \delta)$-property.  If a clustering satisfies the $(c, \delta)$-property, then for all clusterings where $\Phi(C) \leq c*\text{OPT}_\Phi$, $C$ is also $\delta$-close to $C^T$. By analyzing problem instances where this holds true for some values of $c$ and $\delta$, we can generate approximate clustering schema to achieve approximation solutions to discovering the target clustering.
 
  A couple of useful properties:
 
@@ -142,11 +145,11 @@ Thus far we have only addressed clustering based on the data points, but not the
 
 \subsection{Goals}
 
-The goal of this work is to develop a minimal runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{thethingthepapercitesJMS02}. In this review we will show explore the following results:
+The goal of this work is to develop a polynomial runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{thethingthepapercitesJMS02}. In this review we will show explore the following results:
 
 \begin{itemize}
 
-\item Assume we have a problem with a $(1+\alpha, \delta)$-property, and that all target clusters have size greater than $\delta n$. There exists a PTAS $\delta$-close to the target.
+\item Assume we have a problem with a $(1+\alpha, \delta)$-property, and that all target clusters have size greater than $\delta n$. There exists a PTAS $\delta$-close to the target and an algorithm for finding this clustering.
 
 \item Assume that the (k-1)-medians optimal cluster is more expensive than the k optimal clustering by a factor of $(1+\alpha)$ where $\alpha > 0$. Then it is possible to achieve a ($1+\epsilon$) approximation to the optimal k-medians in time polynomial in $n$ and $k$, and exponential in $1/\epsilon$ and $1/\alpha$, where $n = |S|$.
 
@@ -158,7 +161,7 @@ The goal of this work is to develop a minimal runtime clustering algorithm with 
 This paper looks at a few statistics about how points are distributed and how it relates to optimal clusterings.  In particular, it studies notions of "stability," which describes bounds on how much adding or removing clusters from a clustering solution changes the objective function's value, and separability, which describes how far away clusters of points are from one another.  By characterizing point sets in terms of these statistics, the authors derive an algorithm for efficiently clustering the points and derive guarantees on the cluster quality, as well as prove its correctness.
 
 \subsection{Definitions}
-The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (TODO: unique?) and its pointed are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is significant to the solution. Intuitively if this is not the case, then one could reasonably use the ($k-1$) solution in place of the $k$ solution.
+The paper begins by describing a few statistics on the point distributions which are necessary for the subsequent analysis.  Let $OPT_i$ be the contribution to the objective function of the optimal clustering by cluster $i$, and let $OPT^{i \rightarrow j}$ denote the the cost when cluster $i$ is removed from the $OPT$ solution (which, for simplicity's sake, we will assume to be unique) and its points are then given to cluster $j$.  Intuitively, $OPT^{i \rightarrow j}$ corresponds to a (bad) solution of a $k-1$ clustering, and $OPT(k)^{i \rightarrow j} \geq OPT(k-1)$, where $OPT(f)$ is the optimal solution of the $f$ cluster problem.  Let a clustering be $(1 + \alpha)$ weak-deletion stable if, $\forall i \neq j, OPT^{i \rightarrow j} > (1 + \alpha)OPT$ - in other words, removing any cluster and remapping those points to another single cluster severely contributes to the objective function, suggesting that that each cluster is significant to the solution. Intuitively if this is not the case, then one could reasonably use the ($k-1$) solution in place of the $k$ solution.
 
   We define an optimal clustering solution $C^*$ to be $\beta$-distributed for $\beta > 0$ if for any $i$ and any point $x \notin C^*_i, d(x, c^*_i) \geq \beta \frac{OPT}{|C^*_i|}$. Intuitively, this provides a factor $\beta$ for the distance that each point is from another cluster's center, relative to the average distance a point is from its own cluster center. Specifically for this paper, we will focus on the $k$-median case, but analogous logic applies to the $k$-means case as well.   
 
@@ -183,7 +186,7 @@ We use $C^{(i\rightarrow j)}$ to indicate the clustering obtained by taking all 
 \subsubsection{Inner Ring}
 
 
-Define a \emph{cheap cluster} $C_i$ as one where $OPT_i \leq \frac{\beta \epsilon OPT}{32}$.  Let the \emph{inner ring} of $C_i$ be the set of points $x$ such that $d(x, c_i) \leq \frac{ \beta OPT }{8 |C_i|}$.  If $C_i$ is cheap, then no more than $\frac{\epsilon}{4}$ points reside outside its inner ring.  By contradiction, assume that more than $\frac{\epsilon}{4}$ fraction of points exist outside of the inner ring.  $OPT_i > (\text{points outside inner ring}) * (\text{cost of points})$, and the first term in that product is lower bounded by $\frac{\epsilon |C_i|}{4}$ and that second term is lower bounded by $\frac{\beta OPT}{8 |C_i|}$.  Thus, $OPT_i > \frac{\beta \epsilon OPT }{32}$.  But all cheap clusters have cost less than $\frac{\beta \epsilon OPT}{32}$, so we have a contradiction, and thus cheap clusters only have at most $\frac{\epsilon}{4}$ points outside their inner rings.
+Define a \emph{cheap cluster} $C^*_i$ as one where $OPT_i \leq \frac{\beta \epsilon OPT}{32}$.  Let the \emph{inner ring} of $C_i$ be the set of points $x$ such that $d(x, c_i) \leq \frac{ \beta OPT }{8 |C^*_i|}$.  If $C_i$ is cheap, then no more than $\frac{\epsilon}{4}$ points reside outside its inner ring.  By contradiction, assume that more than $\frac{\epsilon}{4}$ fraction of points exist outside of the inner ring.  $OPT_i > (\text{points outside inner ring}) * (\text{cost of points})$, and the first term in that product is lower bounded by $\frac{\epsilon |C^*_i|}{4}$ and that second term is lower bounded by $\frac{\beta OPT}{8 |C^*_i|}$.  Thus, $OPT_i > \frac{\beta \epsilon OPT }{32}$.  But all cheap clusters have cost less than $\frac{\beta \epsilon OPT}{32}$, so we have a contradiction, and thus cheap clusters only have at most $\frac{\epsilon}{4}$ points outside their inner rings.
 
 %TODO: what on Earth does Markov's inequality have to do with this?  Is this a typo in the paper?
 
@@ -216,49 +219,49 @@ In this stage, we continually select candidates of $k$ components from $Q$.  For
 \subsection{Proof of Correctness}
 
 \subsubsection{Points in components are either close or far to their centers}
-We now move into the proof of correctness, and the paper starts by proving a useful lemma for the correctness of the population stage.  In this section, we only consider operations on clusters $C_i$ which are cheap at early steps such that $s \geq |C_i|$.  We prove two useful facts.
+We now move into the proof of correctness, and the paper starts by proving a useful lemma for the correctness of the population stage.  In this section, we only consider operations on clusters $C^*_i$ which are cheap at early steps such that $s \geq |C^*_i|$.  We prove two useful facts.
 
 \begin{lemma}
-Any component $T$ added in step $s$ does not contain any point $z$ such that $\frac{\beta OPT}{2 C_i} \leq  d(c_i, z) \leq \frac{3 \beta OPT}{4 C_i}$.
+Any component $T$ added in step $s$ does not contain any point $z$ such that $\frac{\beta OPT}{2 C^*_i} \leq  d(c_i, z) \leq \frac{3 \beta OPT}{4 C^*_i}$.
 \label{lemma:4.2a}
 \end{lemma}
 
 \begin{proof}
-By contradiction - assume that the distance of $z$ does fall within this range.  In the algorithm, $r = \frac{\beta OPT}{4 s}$, and because of the bound we imposed on $s$, $r = \frac{\beta OPT}{4 |C_i|}$.  Let $p$ be a point such that $d(p, z) < r$.  If $p$ is part of $C_i$ but falls outside of the inner ring (we'll show these two facts soon), and $T$ is added to $Q$, then by step d), it must be that $T$, which is in the ball $r$ of $z$ by step c), has more than $\frac{s}{2}$, and therefore more than $\frac{C_i}{2}$ points.  But, this is a contradiction, since more than half (at least $1 - \frac{\epsilon}{3}$) the points of any inner ring must fall \emph{within} the inner ring, not outside the inner ring, as it would here.
+By contradiction - assume that the distance of $z$ does fall within this range.  In the algorithm, $r = \frac{\beta OPT}{4 s}$, and because of the bound we imposed on $s$, $r = \frac{\beta OPT}{4 |C^*_i|}$.  Let $p$ be a point such that $d(p, z) < r$.  If $p$ is part of $C^*_i$ but falls outside of the inner ring (we'll show these two facts soon), and $T$ is added to $Q$, then by step d), it must be that $T$, which is in the ball $r$ of $z$ by step c), has more than $\frac{s}{2}$, and therefore more than $\frac{C_i}{2}$ points.  But, this is a contradiction, since more than half (at least $1 - \frac{\epsilon}{3}$) the points of any inner ring must fall \emph{within} the inner ring, not outside the inner ring, as it would here.
 
-Now, we show that $p$ is part of $C_i$ and falls outside the inner ring, completing the proof.  
+Now, we show that $p$ is part of $C^*_i$ and falls outside the inner ring, completing the proof.  
 
-First, $p$ is part of $C_i$.  Since $d(c_i, z) \leq \frac{3 \beta OPT}{4 |C_i|}$ and, still, $d(z, p) < r \leq \frac{\beta OPT}{4 |C_i|}$, by the triangle inequality, $d(c_i, p) \leq d(c_i, z) + d(z, p) < \frac{\beta OPT}{|C_i|}$, which means that $p$ belongs to $C_i$ since our clustering is $\beta$-distributed.
+First, $p$ is part of $C^*_i$.  Since $d(c_i, z) \leq \frac{3 \beta OPT}{4 |C^*_i|}$ and, still, $d(z, p) < r \leq \frac{\beta OPT}{4 |C^*_i|}$, by the triangle inequality, $d(c_i, p) \leq d(c_i, z) + d(z, p) < \frac{\beta OPT}{|C^*_i|}$, which means that $p$ belongs to $C^*_i$ since our clustering is $\beta$-distributed.
 
-Second, $p$ falls outside the inner ring.  Since $d(c_i, z) \geq \frac{\beta OPT}{2 |C_i|}$ and $d(z, p) < r \leq \frac{\beta OPT}{4 |C_i|}$, then by the triangle inequality, $d(c_i, p) \geq d(c_i, z) - d(z, p) > \frac{\beta OPT}{4 |C_i|}$. Thus, by the definition of an outer ring, $p$ must fall \emph{outside} it.
+Second, $p$ falls outside the inner ring.  Since $d(c_i, z) \geq \frac{\beta OPT}{2 |C^*_i|}$ and $d(z, p) < r \leq \frac{\beta OPT}{4 |C^*_i|}$, then by the triangle inequality, $d(c_i, p) \geq d(c_i, z) - d(z, p) > \frac{\beta OPT}{4 |C^*_i|}$. Thus, by the definition of an outer ring, $p$ must fall \emph{outside} it.
 
 \end{proof}
 
 \begin{lemma}
-Given the same preconditions, $T$ cannot contain a pair of points $(p_1, p_2)$ such that $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.
+Given the same preconditions, $T$ cannot contain a pair of points $(p_1, p_2)$ such that $p_1$ is within $\frac{\beta OPT}{2 |C^*_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C^*_i|}$.
 \label{lemma:4.2b}
 \end{lemma}
 
 \begin{proof}
-Proof by contradiction.  Assume this did not hold.  Since we assume that $T$ is a connected component, there's a path from $p_1$ to $p_2$.  By step $c$ in the algorithm, two points are only connected if their distance is at most $r = \frac{\beta OPT}{4s} \leq \frac{\beta OPT}{4|C_i|}$.
+Proof by contradiction.  Assume this did not hold.  Since we assume that $T$ is a connected component, there's a path from $p_1$ to $p_2$.  By step $c$ in the algorithm, two points are only connected if their distance is at most $r = \frac{\beta OPT}{4s} \leq \frac{\beta OPT}{4|C^*_i|}$.
 
-However by triangle inequality $d(p_1, p_2) \geq d(p_2, c_i) - d(p_1, c_i) \geq \frac{5\beta OPT}{6|C_i|} \geq \frac{\beta OPT}{4|C_i|}$, leading to a contradiction. 
+However by triangle inequality $d(p_1, p_2) \geq d(p_2, c_i) - d(p_1, c_i) \geq \frac{5\beta OPT}{6|C_i|} \geq \frac{\beta OPT}{4|C^*_i|}$, leading to a contradiction. 
 
 %  Then, since we assumed this lemma did not hold, $p_1$ is within $\frac{\beta OPT}{2 |C_i|}$ of $c_i$ and $p_2$ is greater than $\frac{4 \beta OPT}{3 |C_i|}$.  This means there can be a point that falls within that range along the connected path, which would contradict lemma \ref{lemma:4.2a}.
 \end{proof}
 
-Combined, these two lemmas state that every point in a component either lies relatively far (more than $\frac{4 \beta OPT}{3 |C_i|}$ )to $c_i$ or very close to $c_i$ (within $\frac{\beta OPT}{2 |C_i|}$).  
+Combined, these two lemmas state that every point in a component either lies relatively far (more than $\frac{4 \beta OPT}{3 |C^*_i|}$ )to $c_i$ or very close to $c_i$ (within $\frac{\beta OPT}{2 |C^*_i|}$).  
 
 %TODO: is this accurate?
 %Lemma 2.1 had a couple of clear bugs (proofs for inner ring and part of C_i were reversed) Reread 2.2 and see if I what I said made sense?
 
 \subsubsection{Points in inner rings are quickly added for each cluster}
 
-Here we show that for each cluster $C_i$, $Q$ will always contain a component $T'$ with a point from the inner ring of $C_i$ by step $s = |C_i|$.
+Here we show that for each cluster $C^*_i$, $Q$ will always contain a component $T'$ with a point from the inner ring of $C^*_i$ by step $s = |C^*_i|$.
 
 To see why this is the case, assume that we are at step $s$ and the algorithm has not yet inserted some $T'$ yet.  There are two possible things that could happen here.  Either that component might be added at step $s$ (in which case we're done), or it could be that the point the algorithm would add has been removed by some other step.  What we need to prove is that even if an inner ring point is removed, the algorithm will still add a different inner ring point at this step.
 
-Assume for contradiction's sake that no other inner ring point for $C_i$ is added at or before step $s$, and let $s' \geq |C_i|$ (remember we are counting \emph{backwards}) be the step at which the original inner ring point (call it $x$) were removed.  Then if this point were removed it's due to step b), and it was removed because there already exists a point (call it $y$) in a component in $Q$ within $2r = \frac{\beta OPT}{2s'} \leq \frac{\beta OPT}{2|C_i|}$ of this $x$.  Then, by the triangle inequality, since we also know that $d(c_i, x) \leq \frac{\beta OPT}{8 |C_i|}$ since it's an inner ring point,  $d(c_i, y) \leq d(c_i, x) + d(x, y) \leq \frac{\beta OPT}{2s} + \frac{\beta OPT}{8 |C_i|} \leq \frac{5 \beta OPT}{8 |C_i|}$.  Now, let $s''$ be the step at which $T''$, the component which held $y$ was inserted.  We know that $d(c_i, y) < \frac{\beta OPT}{2 |C_i|}$   By step d) in the algorithm, $T''$ must be of at least size $\frac{s''}{2}$ and thus at least size $\frac{|C_i|}{2}$, but by our assumption (for contradiction) does not contain a single inner ring point on $C_i$.  Then, since we know at least half of a cheap cluster should belong to its inner ring, all of the points in $T''$ can't be in $C_i$ and so at least one point (say, $w$) must be in some $C_j~i \neq j$.  By $\beta$ distribution, $d(c_i, w) > \frac{\beta OPT}{|C_i|}$, but by \ref{lemma:4.2b}, we can't have this far $w$ and close $y$ both in $T''$.  Thus we have a contradiction, and so a different inner ring point than $x$ must have already been added.
+Assume for contradiction's sake that no other inner ring point for $C^*_i$ is added at or before step $s$, and let $s' \geq |C^*_i|$ (remember we are counting \emph{backwards}) be the step at which the original inner ring point (call it $x$) were removed.  Then if this point were removed it's due to step b), and it was removed because there already exists a point (call it $y$) in a component in $Q$ within $2r = \frac{\beta OPT}{2s'} \leq \frac{\beta OPT}{2|C^*_i|}$ of this $x$.  Then, by the triangle inequality, since we also know that $d(c_i, x) \leq \frac{\beta OPT}{8 |C^*_i|}$ since it's an inner ring point,  $d(c_i, y) \leq d(c_i, x) + d(x, y) \leq \frac{\beta OPT}{2s} + \frac{\beta OPT}{8 |C^*_i|} \leq \frac{5 \beta OPT}{8 |C^*_i|}$.  Now, let $s''$ be the step at which $T''$, the component which held $y$ was inserted.  We know that $d(c_i, y) < \frac{\beta OPT}{2 |C^*_i|}$   By step d) in the algorithm, $T''$ must be of at least size $\frac{s''}{2}$ and thus at least size $\frac{|C^*_i|}{2}$, but by our assumption (for contradiction) does not contain a single inner ring point on $C^*_i$.  Then, since we know at least half of a cheap cluster should belong to its inner ring, all of the points in $T''$ can't be in $C^*_i$ and so at least one point (say, $w$) must be in some $C_j~i \neq j$.  By $\beta$ distribution, $d(c_i, w) > \frac{\beta OPT}{|C^*_i|}$, but by \ref{lemma:4.2b}, we can't have this far $w$ and close $y$ both in $T''$.  Thus we have a contradiction, and so a different inner ring point than $x$ must have already been added.
 
 %(TODO: why?  I don't understand that).
 % if it's within frac{\beta OPT}{2|C_i|} of some x, and that x is within frac{\beta OPT}{8|C_i|}  of the center, by triangle inequality the thing you were quesitoning holds. 
