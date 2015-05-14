@@ -106,7 +106,7 @@ Here we review work done on approximations for clustering algorithms, focusing o
 In order to begin our analysis of clustering, we first define what clustering means exactly, and the relationship it holds in solving an underlying data analysis problem. 
 
 \subsection{k-medians}
-The algorithm we will focus on is the k-medians algorithm. The k-medians algorithm assumes a space $(X, d)$ for which $X$ is the set of possible points and distance $d : ({ X \choose 2}) \rightarrow R_{\geq 0}$ which satisfies the triangle inequality. We are then given a set of points $S \subset X$. The goal is to label the points in $S$ each into one of k clusters $C_1, C_2, ..., C_k$ with corresponding representative points $c_1, c_2, ..., c_k \in X$. This defines a clustering $C$. The optimal objective clustering is that which minimizes $\Phi(C) = \sum\limits_{i = 1}^k \sum_{x \in C_i} d(x, c_i)$.
+The algorithm we will focus on is the k-medians algorithm. The k-medians algorithm assumes a space $(X, d)$ for which $X$ is the set of possible points and distance $d : ({ X \choose 2}) \rightarrow R_{\geq 0}$ which satisfies the triangle inequality. We are then given a set of points $S \subset X$. The goal is to label the points in $S$ each into one of k clusters $C_1, C_2, ..., C_k$ with corresponding representative points $c_1, c_2, ..., c_k \in X$. This defines a clustering $C$. The optimal objective clustering is that which minimizes $\Phi(C) = \sum\limits_{i = 1}^k \sum_{x \in C_i} d(x, c_i)$.  For $k$-medians, $d$ is the $L_1$ norm.
 
 Let the distance between two clusterings $dist(C, C')$ be the 
 fraction of points for which those two clusterings disagree on labels under the minimizing bijection between cluster labels, and let $\text{OPT}_\Phi = \Phi(C^*)$
@@ -149,13 +149,13 @@ The \textbf{objective} function $\Phi(C)$ is the cost of a clustering based only
 
 \subsection{Goals}
 
-The goal of this work is to develop a polynomial runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{JMS02}. In this review we will show explore the following results:
+The goal of these papers is to develop a polynomial runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{JMS02}. In this review we will show explore the following results:
 
 \begin{itemize}
 
 \item Assume we have a problem with a $(1+\alpha, \delta)$-property, and that all target clusters have size greater than $\delta n$. There exists a PTAS $\delta$-close to the target and an algorithm for finding this clustering.
 
-\item Assume that the (k-1)-medians optimal cluster is more expensive than the k optimal clustering by a factor of $(1+\alpha)$ where $\alpha > 0$. Then it is possible to achieve a ($1+\epsilon$) approximation to the optimal k-medians in time polynomial in $n$ and $k$, and exponential in $1/\epsilon$ and $1/\alpha$, where $n = |S|$.
+\item Assume that the ($k-1$)-medians optimal cluster is more expensive than the $k$ optimal clustering by a factor of $(1+\alpha)$ where $\alpha > 0$. Then it is possible to achieve a ($1+\epsilon$) approximation to the optimal k-medians in time polynomial in $n$ and $k$, and exponential in $1/\epsilon$ and $1/\alpha$, where $n = |S|$.
 
 \item Assume we have a problem with a $(1+\alpha, \delta)$-property, with no restriction on cluster size. There exists n $O(\delta/\alpha)$-close to the target and an algorithm for finding this clustering.
 \end{itemize}
@@ -199,7 +199,7 @@ Define a \emph{cheap cluster} $C^*_i$ as one where $OPT_i \leq \frac{\beta \epsi
 \subsection{Algorithm}
 
 \begin{algorithm}
-\caption{Cluster TODO: better name}\label{alg:cluster}
+\caption{$k$-Median Approximation Clustering (as in \cite{secondpaper})}\label{alg:cluster}
 \begin{algorithmic}[1]
 \Procedure{Cluster}{}
 \BState \textbf{Initialization Stage:} $Q \gets Q_{init}$
@@ -292,9 +292,9 @@ Assume for contradiction's sake that no other inner ring point for $C^*_i$ is ad
 
 Consider that $T$ contains the inner ring of some $C^*_i$ (which was established above). We show here that all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$, $T \cup B(T)$ are contained in $C_i^*$ and that no other component contains inner ring points from $C^*_i$.
 
-We know all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$ because at least some are in the inner ring of $C^*_i$. Following from \ref{lemma:4.2a} and \ref{lemma:4.2b}, it is then impossible for a point to exist that is further than $\frac{\beta\text{OPT}}{2|C^*_i|}$ from $c_i^*$. This immediately implies that $T \subset C_i^*$ because $C_i^*$ is beta distributed. Additionally we have that all points in B(T) are less than $2r$ away from some point in $T$. Because we established $2r = \frac{\beta\text{OPT}}{4s} \leq \frac{\beta\text{OPT}}{2|C_i^*|}$, all points in B(T) then within $ \frac{\beta\text{OPT}}{|C_i^*|}$ of $c_i^*$, and therefor within $C_i^*$. 
+We know all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$ because at least some are in the inner ring of $C^*_i$. Following from \ref{lemma:4.2a} and \ref{lemma:4.2b}, it is then impossible for a point to exist that is further than $\frac{\beta\text{OPT}}{2|C^*_i|}$ from $c_i^*$. This immediately implies that $T \subset C_i^*$ because $C_i^*$ is beta distributed. Additionally we have that all points in B(T) are less than $2r$ away from some point in $T$. Because we established $2r = \frac{\beta\text{OPT}}{4s} \leq \frac{\beta\text{OPT}}{2|C_i^*|}$, all points in B(T) then within $ \frac{\beta\text{OPT}}{|C_i^*|}$ of $c_i^*$, and therefore within $C_i^*$. 
 
-Because all points in $T$ are sufficiently close to $C_i^*$ there are at most $|C_i^*|$ points in $T$, and so $s < 2|C_i^*|$. All inner ring points are at most $\frac{\beta\text{OPT}}{4|C^*_i|} < 2r$ away from any other point, requiring all points not in $T$ be added to $B(T)$. Therefor no other component can contain inner ring points for $C_i^*$.
+Because all points in $T$ are sufficiently close to $C_i^*$ there are at most $|C_i^*|$ points in $T$, and so $s < 2|C_i^*|$. All inner ring points are at most $\frac{\beta\text{OPT}}{4|C^*_i|} < 2r$ away from any other point, requiring all points not in $T$ be added to $B(T)$. Therefore no other component can contain inner ring points for $C_i^*$.
 
 
 \subsubsection{Less than $16/(3\beta)$ that do not contain an inner ring point}
@@ -305,7 +305,7 @@ Consider a $T$ which does not contain an inner ring point. We will show that all
 
 \item Assume $y$ is from an expensive cluster $C^*_i$. Because $Q$ are the set of expensive clusters, we know that for the point to not be thrown out $d(c^*, y) > 2r = \frac{\beta\text{OPT}}{2s} > \frac{3\beta\text{OPT}}{8s}$.
 
-\item $C^*_i$ is a cheaper cluster and $s \geq |C^*|$. Because we established $d(c^*, y) < \frac{\beta \text{OPT}}{2|C^*|}$ or $d(c^*, y) > \frac{3 \beta \text{OPT}}{4|C^*|}$ We know at least one point must meet the larger property. Since the inner ring contains $> |C^*|/2$, but $T$ also contains at least $s/2 = |C^*_i|/2$ points, some point in $T$ must not be in $C^*_i$, and therefor have distance larger than $\frac{3 \beta \text{OPT}}{4|C^*|}$. \ref{lemma:4.2b} then tells us all points must meet the property.
+\item $C^*_i$ is a cheaper cluster and $s \geq |C^*|$. Because we established $d(c^*, y) < \frac{\beta \text{OPT}}{2|C^*|}$ or $d(c^*, y) > \frac{3 \beta \text{OPT}}{4|C^*|}$ We know at least one point must meet the larger property. Since the inner ring contains $> |C^*|/2$, but $T$ also contains at least $s/2 = |C^*_i|/2$ points, some point in $T$ must not be in $C^*_i$, and therefore have distance larger than $\frac{3 \beta \text{OPT}}{4|C^*|}$. \ref{lemma:4.2b} then tells us all points must meet the property.
 
 \item $C^*_i$ is a cheaper cluster and $s < |C^*|$. We know that all points are at least $2r$ from the center, as some such component meeting the conditions of the previous section must exist. $d(c^*, y) \geq d(x, y) - d(c^*, x) \geq \frac{\beta\text{OPT}}{2s} - \frac{\beta\text{OPT}}{8|C^*_i|} > \frac{3\beta\text{OPT}}{8s}$
 \end{itemize}
@@ -318,9 +318,9 @@ In order to show this we will compare the total cost of clusters $\mathcal{C}$ D
 
 The cost of a cheap cluster is $\sum\limits_{x\in T\cup B(T)}d(x, c_i) + \sum\limits_{x \in C_i^* and x\notin T\cup B(T)}d(x, c_i)$. Because all points in the first term are in the inner ring, that includes the center, so $\sum\limits_{x\in T\cup B(T)}d(x, c_i) \leq \sum\limits_{x\in T\cup B(T)}d(x, c^*_i)$. We must show the error in $\sum\limits_{x \in C_i^* and x\notin T\cup B(T)}d(x, c_i)$ is bounded by $(1+\epsilon)$.
 
-We will show that $d(c_i, c_i*) < \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$ for a cheap cluster. We know by the definition of a cheap cluster that the cost is at most $(\epsilon/32)\beta\text{OPT}/|C_i^*|$. In order not exceed this bound, at least half of the points have distance at most $(\epsilon/16)\beta\text{OPT}/|C_i^*|$ from $c_i^*$. Also these are by definition in the inner ring. We know that at least half the points in a cheap cluster reside in the inner ring. If $d(c_i, c_i^*)  \geq \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$, then we require at least half of the points to contribute at least $(\epsilon/16)\beta\text{OPT}/|C_i^*|$ to the sum, which means some point in the inner ring must do so. Therefor $\sum\limits_{x\in T\cup B(T)}d(x, c_i)> OPT_i$, which contradicts the optimality of the inner ring points. 
+We will show that $d(c_i, c_i*) < \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$ for a cheap cluster. We know by the definition of a cheap cluster that the cost is at most $(\epsilon/32)\beta\text{OPT}/|C_i^*|$. In order not exceed this bound, at least half of the points have distance at most $(\epsilon/16)\beta\text{OPT}/|C_i^*|$ from $c_i^*$. Also these are by definition in the inner ring. We know that at least half the points in a cheap cluster reside in the inner ring. If $d(c_i, c_i^*)  \geq \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$, then we require at least half of the points to contribute at least $(\epsilon/16)\beta\text{OPT}/|C_i^*|$ to the sum, which means some point in the inner ring must do so. Therefore $\sum\limits_{x\in T\cup B(T)}d(x, c_i)> OPT_i$, which contradicts the optimality of the inner ring points. 
 
-We therefor for each $x \in C_i^* and x\notin T\cup B(T)$ we have $d(c_i, c_i^*) \leq \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$. So $d(x, c_i) \leq d(x, c_i^*) + d(c_i^*, c_i) \leq (1+\epsilon)d(x,c_i^*)$. And so each point adds at most a factor of $(1+\epsilon)$ to the error, bounding our total error to $(1+\epsilon)\text{OPT}$
+We therefore for each $x \in C_i^* and x\notin T\cup B(T)$ we have $d(c_i, c_i^*) \leq \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$. So $d(x, c_i) \leq d(x, c_i^*) + d(c_i^*, c_i) \leq (1+\epsilon)d(x,c_i^*)$. And so each point adds at most a factor of $(1+\epsilon)$ to the error, bounding our total error to $(1+\epsilon)\text{OPT}$
 
 
 
