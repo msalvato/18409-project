@@ -239,11 +239,9 @@ Finally, for each connected component that results this way, add it to $Q$ if it
 
 At the end of the population stage, we have a collection of connected components in $Q$ from which we derive clusters, in the "Centers-Retrieving stage."
 
-In this stage, we continually select candidates of $k$ components from $Q$.  For each component, we choose the point that is the best possible center $c_i$ for that component and all points within $2r$ of that component.  Then, we assign all points to the nearest cluster center $c_i$.  Eventually, one of these subsets of components should give us a clustering with value at most $(1 + \epsilon) OPT$ (assuming $OPT$ is known; we will prove this).
+In this stage, we continually select candidates of $k$ components from $Q$.  For each component, we choose the point that is the best possible center $c_i$ for that component and all points within $2r$ of that component.  Then, we assign all points to the nearest cluster center $c_i$.  Eventually, one of these subsets of components should give us a clustering with value at most $(1 + \epsilon) OPT$, assuming OPT is known. While the algorithm could be shown to work using common estimators for OPT, they will be excluded from analysis.
 
 \subsection{Proof of Correctness}
-
-TODO: dscribe how we assume OPT is known and why that's valid.
 
 \subsubsection{Points in components are either close or far to their centers}
 We now move into the proof of correctness, and the paper starts by proving a useful lemma for the correctness of the population stage.  In this section, we only consider operations on clusters $C^*_i$ which are cheap at early steps such that $s \geq |C^*_i|$.  We prove two useful facts.
@@ -367,7 +365,7 @@ A \textbf{threshold graph} $G_\tau = (S, E_\tau)$ to be that which has all pairs
 
 \item If $x \in X_i$ and $y \in X_{j \neq i}$, the $(x,y) \notin E(G_\tau)$, and they share no neighbors. That is, if two points are tightly bound each to different clusters, they will not share edges in the threshold graph. 
 
-The algorithm, taken directly from \cite{firstpaper} is: *algorithm, I'll format it like you do*
+\ref{alg:cluster2} taken directly from \cite{firstpaper} uses such a threshold graph to generate the clusters.
 
 As $w$ may not be known directly, running this algorithm on a $\gamma$-approximation of $w$ gives a $O(\gamma\delta/\alpha)$ approximation of the optimal clustering. As noted above, for sake of brevity we exclude the proof for this algorithm. However intuitively the threshold graph groups points into cliques,. By virtue of how the graph was created, we guarantee that when a cluster is selected from the graph, only a bounded number of possibly incorrect points can be added to that cluster. Additionally total number of points that were in a clique which belonged to a different cluster is bounded, so the final cluster also has bounded error. 
 
