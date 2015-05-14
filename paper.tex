@@ -26,6 +26,8 @@
 %\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
 \usepackage[english]{babel} % English language/hyphenation
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage{mathtools}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
@@ -60,6 +62,9 @@
 \usepackage[mathscr]{euscript}
 \usepackage{parskip}
 
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
 
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\vecsf}[1]{\textsf{\textbf{#1}}}
@@ -193,6 +198,27 @@ Define a \emph{cheap cluster} $C^*_i$ as one where $OPT_i \leq \frac{\beta \epsi
 %Yeah i have no idea... what you said seems uhh... pretty straightfoward
 
 \subsection{Algorithm}
+
+\begin{algorithm}
+\caption{Cluster TODO: better name}\label{alg:cluster}
+\begin{algorithmic}[1]
+\Procedure{Cluster}{}
+\BState \textbf{Initialization Stage:} $Q \gets Q_{init}$
+\BState \textbf{Population Stage:} For $s=n, n-1, n-2, \ldots 1$ do:
+\State a) Set $r=\frac{\beta OPT}{4 s}$
+\State b) Remove any point $x$ such that $d(x, Q) < 2r$.
+\State c) For any remaining data point $x$, denote the set of data points whose distance from $x$ is at most $r$ by $B(x, r)$.  Connect any two remaining points $a$ and $b$ if: (i) $d(a, b) \lq r$ (ii) $|B(a, r)| > \frac{s}{2}$ and (iii) $|B(b, r)| > \frac{s}{2}$.
+\State d) Let $T$ be a connected component of size $ > \frac{s}{2}$.  Then i) Add $T$ to $Q$.  ii) Define the set $B(T) = \{x : d(x, y) \leq 2r$ for some $y \in T\}$.  Remove the points $B(T)$ from the instance.
+\BState \textbf{Centers-Retrieving Stage}: For any choice of $k$ components $T_1, T_2, \ldots, T_k$ out of $Q$:
+\State a) Find the best center $C_i$ for $T_i \cup B(T_i)$.
+\State b) Partition all $n$ points according to the nearest point among the $k$ centers of the current $k$ components.
+\State c) If a clustering of at most $(1 + \epsilon)OPT$ is found - output these $k$ centers and halt.
+ %\hspace{\algorithmicindent} $pq.put( (v_j, e_{jk}), e_{jk}^z)$.
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
 We'll begin by briefly discussing the intuition of the $(1 + \epsilon)$ approximation algorithm.
 
 Let's begin by partitioning our set of clusters into two types.  There are  "cheap" clusters and "expensive" clusters, with the idea being that the expensive clusters contribute a larger amount to the cost than the cheaper clusters; in other words, we have mostly densely packed groups of points, and a few not-so densely packed groups.  The key idea is to assume (and later we prove) that the number of expensive clusters is \emph{bounded}.  We then have a method for clustering the cheap point sets, assuming we can partition cheap and expensive points: guess the number of points in the cheap clusters, derive a relationship from the number of points to the radius $r$ of that point set, and then draw balls of radius $r$ around the points in each of those sets.  In order to cluster the expensive points, we then use brute force to guess each of the remaining cluster centers, and since the number of remaining clusters is bounded and small, this brute force operation should not contribute significantly to the runtime.  This all hinges on being able to partition the points into cheap and expensive sets, which arises naturally out of the procedure.  In practice, the algorithm attempts to create a list of possible subsets of points (which could overlap in membership), and iteratively refine that list to create our $k$ clusters. 
