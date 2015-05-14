@@ -265,6 +265,30 @@ To see why this is the case, assume that we are at step $s$ and the algorithm ha
 
 Assume for contradiction's sake that no other inner ring point for $C^*_i$ is added at or before step $s$, and let $s' \geq |C^*_i|$ (remember we are counting \emph{backwards}) be the step at which the original inner ring point (call it $x$) were removed.  Then if this point were removed it's due to step b), and it was removed because there already exists a point (call it $y$) in a component in $Q$ within $2r = \frac{\beta OPT}{2s'} \leq \frac{\beta OPT}{2|C^*_i|}$ of this $x$.  Then, by the triangle inequality, since we also know that $d(c_i, x) \leq \frac{\beta OPT}{8 |C^*_i|}$ since it's an inner ring point,  $d(c_i, y) \leq d(c_i, x) + d(x, y) \leq \frac{\beta OPT}{2s} + \frac{\beta OPT}{8 |C^*_i|} \leq \frac{5 \beta OPT}{8 |C^*_i|}$.  Now, let $s''$ be the step at which $T''$, the component which held $y$ was inserted.  We know that $d(c_i, y) < \frac{\beta OPT}{2 |C^*_i|}$   By step d) in the algorithm, $T''$ must be of at least size $\frac{s''}{2}$ and thus at least size $\frac{|C^*_i|}{2}$, but by our assumption (for contradiction) does not contain a single inner ring point on $C^*_i$.  Then, since we know at least half of a cheap cluster should belong to its inner ring, all of the points in $T''$ can't be in $C^*_i$ and so at least one point (say, $w$) must be in some $C^*_j~i \neq j$.  By $\beta$ distribution, $d(c_i, w) > \frac{\beta OPT}{|C^*_i|}$, but by \ref{lemma:4.2b}, we can't have this far $w$ and close $y$ both in $T''$.  Thus we have a contradiction, and so a different inner ring point than $x$ must have already been added.
 
+\subsubsection{A given component uniquely contains the inner ring of a given $C^*_i$}
+
+Consider that $T$ contains the inner ring of some $C^*_i$ (which was established above). We show here that all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$, $T \cup B(T)$ are contained in $C_I^*$ and that no other component contains inner ring points from $C^*_i$.
+
+We know all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$ because at least some are in the inner ring of $C^*_i$. Following from \ref{lemma:4.2a} and \ref{emma:4.2b}, it is then impossible for a point to exist that is further than $\frac{\beta\text{OPT}}{2|C^*_i|}$ from $c_i^*$. This immediately implies that $T \subset C_i^*$ because $C_i^*$ is beta distributed. Additionally we have that all points in B(T) are less than $2r$ away from some point in $T$. Because we established $2r = \frac{\beta\text{OPT}}{4s} \leq \frac{\beta\text{OPT}}{2|C_i^*|}$, all points in B(T) then within $ \frac{\beta\text{OPT}}{|C_i^*|}$ of $c_i^*$, and therefor within $C_i^*$. 
+
+Because all points in $T$ are sufficiently close to $C_i^*$ there are at most $|C_i^*|$ in $T$, and so $s < 2|C_i^*|$. All inner ring points are at most $\frac{\beta\text{OPT}}{4|C^*_i|} < 2r$ away from any other point, requiring all points not in $T$ be added to $B(T)$. Therefor no other component can contain inner ring points for $C_*^i$.
+
+\subsubsection{Less than $16/(3\beta)$ that do not contain an inner ring point}
+
+Consider a $T$ which does not contain an inner ring point. We will show that all points in $y \in T$ have distance greater than $\frac{3\beta\text{OPT}}{8s}$ to their optimal cluster centers $c_i^*$. Because each $T$ contains at least $s/2$ points, by doing so we show there cannot be more than $16/3\beta$ such $T$ (as their total contribution would then be OPT).
+
+\begin{itemize}
+
+\item Assume $y$ is from an expensive cluster $C^*_i$. Because $Q$ are the set of expensive clusters, we know that for the point to not be thrown out $d(c^*, y) > 2r = \frac{\beta\text{OPT}}{2s} > \frac{3\beta\text{OPT}}{8s}$.
+
+\item $C^*_i$ is a cheaper cluster and $s \geq |C^*|$. Because we established $d(c^*, y) < \frac{\beta \text{OPT}}{2|C^*|}$ or $d(c^*, y) > \frac{3 \beta \text{OPT}}{4|C^*|}$ We know at least one point must meet the larger property. Since the inner ring contains $> |C^*|/2$, but $T$ also contains at least $s/2 = |C^*_i|/2$ points, some point in $T$ must not be in $C^*_i$, and therefor have distance larger than $\frac{3 \beta \text{OPT}}{4|C^*|}$. \ref{lemma:4.2b} then tells us all points must meet the property.
+
+\item $C^*_i$ is a cheaper cluster and $s < |C^*|$. We know that all points are at least $2r$ from the center, as some such component meeting the conditions of the previous section must exist. $d(c^*, y) \geq d(x, y) - d(c^*, x) \geq \frac{\beta\text{OPT}}{2s} - \frac{\beta\text{OPT}}{8|C^*_i|} > \frac{3\beta\text{OPT}}{8s}$
+\end{itemize}
+
+
+
+
 %(TODO: why?  I don't understand that).
 % if it's within frac{\beta OPT}{2|C_i|} of some x, and that x is within frac{\beta OPT}{8|C_i|}  of the center, by triangle inequality the thing you were quesitoning holds. 
 
@@ -274,7 +298,7 @@ Step 2) in the algorithm is run $n$ times.  For each of those $n$ runs, we loop,
 
 Step 3) iterates over $k^{O(\frac{1}{\beta})}$ cluster guesses, and for each of these is a simple $n^2$ procedure to find the cluster centers (iterating potentially over each point $p$, and then iterating over potentially each other point to calculate statistics to determine if $p$ is the median)  (3 b).  Subsequently, step 3 measures the cost of each of the resulting clusters, which takes $O(nk)$ time (iterate over $k$ potential clusters.  For each, iterate over up to $n$ points).  Thus, step 3) takes $O(n^2 + nk)$ iterations for each guess of $k$ components.  We need to do this $k^{O(\frac{1}{\beta})}$ times, making the runtime for step 3 $O((n^2 + nk)k^{O(\frac{1}{\beta})})$
 
-Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O(((n^2 + nk)k^{O(\frac{1}{\beta})}+n^3)n^{O(\frac{1}{\beta e})})$ which is polynomial.
+Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O(((n^2 + nk)k^{O(\frac{1}{\beta})}+n^3)n^{O(\frac{1}{\beta e})}) = O(n^{O(1/\beta\epsilon)}k^{O(1/\beta)}$ .
 
 \subsection{Removing the cluster size restriction}
 
