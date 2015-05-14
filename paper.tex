@@ -145,7 +145,7 @@ The \textbf{objective} function $\Phi(C)$ is the cost of a clustering based only
 
 \subsection{Goals}
 
-The goal of this work is to develop a polynomial runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{thethingthepapercitesJMS02}. In this review we will show explore the following results:
+The goal of this work is to develop a polynomial runtime clustering algorithm with minimal constraints on the values of $c$ and $\delta$ as described above. It is known that a better than $1 + \frac{2}{\delta}$ approximation for k-medians is NP-hard \cite{JMS02}. In this review we will show explore the following results:
 
 \begin{itemize}
 
@@ -329,5 +329,7 @@ The algorithm, taken directly from \cite{firstpaper} is: *algorithm, I'll format
 As $w$ may not be known directly, running this algorithm on a $\gamma$-approximation of $w$ gives a $O(\gamma\delta/\alpha)$ approximation of the optimal clustering. As noted above, for sake of brevity we exclude the proof for this algorithm. However intuitively the threshold graph groups points into cliques,. By virtue of how the graph was created, we guarantee that when a cluster is selected from the graph, only a bounded number of possibly incorrect points can be added to that cluster. Additionally total number of points that were in a clique which belonged to a different cluster is bounded, so the final cluster also has bounded error. 
 
 \end{itemize}
+\bibliography{biblio}{}
+\bibliographystyle{plain}
 
 \end{document}
