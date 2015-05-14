@@ -266,11 +266,11 @@ Assume for contradiction's sake that no other inner ring point for $C^*_i$ is ad
 
 \subsubsection{A given component uniquely contains the inner ring of a given $C^*_i$}
 
-Consider that $T$ contains the inner ring of some $C^*_i$ (which was established above). We show here that all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$, $T \cup B(T)$ are contained in $C_I^*$ and that no other component contains inner ring points from $C^*_i$.
+Consider that $T$ contains the inner ring of some $C^*_i$ (which was established above). We show here that all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$, $T \cup B(T)$ are contained in $C_i^*$ and that no other component contains inner ring points from $C^*_i$.
 
 We know all points in $T$ are within $\frac{\beta\text{OPT}}{2|C^*_i|}$ of $c_i^*$ because at least some are in the inner ring of $C^*_i$. Following from \ref{lemma:4.2a} and \ref{lemma:4.2b}, it is then impossible for a point to exist that is further than $\frac{\beta\text{OPT}}{2|C^*_i|}$ from $c_i^*$. This immediately implies that $T \subset C_i^*$ because $C_i^*$ is beta distributed. Additionally we have that all points in B(T) are less than $2r$ away from some point in $T$. Because we established $2r = \frac{\beta\text{OPT}}{4s} \leq \frac{\beta\text{OPT}}{2|C_i^*|}$, all points in B(T) then within $ \frac{\beta\text{OPT}}{|C_i^*|}$ of $c_i^*$, and therefor within $C_i^*$. 
 
-Because all points in $T$ are sufficiently close to $C_i^*$ there are at most $|C_i^*|$ in $T$, and so $s < 2|C_i^*|$. All inner ring points are at most $\frac{\beta\text{OPT}}{4|C^*_i|} < 2r$ away from any other point, requiring all points not in $T$ be added to $B(T)$. Therefor no other component can contain inner ring points for $C_*^i$.
+Because all points in $T$ are sufficiently close to $C_i^*$ there are at most $|C_i^*|$ points in $T$, and so $s < 2|C_i^*|$. All inner ring points are at most $\frac{\beta\text{OPT}}{4|C^*_i|} < 2r$ away from any other point, requiring all points not in $T$ be added to $B(T)$. Therefor no other component can contain inner ring points for $C_i^*$.
 
 
 \subsubsection{Less than $16/(3\beta)$ that do not contain an inner ring point}
@@ -288,9 +288,11 @@ Consider a $T$ which does not contain an inner ring point. We will show that all
 
 \subsubsection{The algorithm outputs a k-clustering with cost $\leq (1+\epsilon)OPT$}
 
-In order to show this we will compare the total cost of clusters $\mathcal{C}$ Derived by $T_1, ..., T_k$ with those of $\mathcal{C}^*$. We know that the expensive clusters $C_i$ have centers $c_i^*$, and so its total cost will not exceed $\text{OPT}_i$.
+In order to show this we will compare the total cost of clusters $\mathcal{C}$ Derived by $T_1, ..., T_k$ with those of $\mathcal{C}^*$.
 
-The cost of a cheap cluster is $\sum\limits_{x\in T\cup B(T)}d(x, c_i) + \sum\limits_{x \in C_i^* and x\notin T\cup B(T)}d(x, c_i)$. Because all points in the first term are in the innter ring, that includes the center, so $\sum\limits_{x\in T\cup B(T)}d(x, c_i) \leq \sum\limits_{x\in T\cup B(T)}d(x, c^*_i)$. We must show the error in $\sum\limits_{x \in C_i^* and x\notin T\cup B(T)}d(x, c_i)$ is bounded by $(1+\epsilon)$.
+ We know that each expensive cluster $C_i$ has centers $c_i^*$, and so its total cost will not exceed $\text{OPT}_i$.
+
+The cost of a cheap cluster is $\sum\limits_{x\in T\cup B(T)}d(x, c_i) + \sum\limits_{x \in C_i^* and x\notin T\cup B(T)}d(x, c_i)$. Because all points in the first term are in the inner ring, that includes the center, so $\sum\limits_{x\in T\cup B(T)}d(x, c_i) \leq \sum\limits_{x\in T\cup B(T)}d(x, c^*_i)$. We must show the error in $\sum\limits_{x \in C_i^* and x\notin T\cup B(T)}d(x, c_i)$ is bounded by $(1+\epsilon)$.
 
 We will show that $d(c_i, c_i*) < \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$ for a cheap cluster. We know by the definition of a cheap cluster that the cost is at most $(\epsilon/32)\beta\text{OPT}/|C_i^*|$. In order not exceed this bound, at least half of the points have distance at most $(\epsilon/16)\beta\text{OPT}/|C_i^*|$ from $c_i^*$. Also these are by definition in the inner ring. We know that at least half the points in a cheap cluster reside in the inner ring. If $d(c_i, c_i^*)  \geq \epsilon\frac{\beta\text{OPT}}{8|C_i^*|}$, then we require at least half of the points to contribute at least $(\epsilon/16)\beta\text{OPT}/|C_i^*|$ to the sum, which means some point in the inner ring must do so. Therefor $\sum\limits_{x\in T\cup B(T)}d(x, c_i)> OPT_i$, which contradicts the optimality of the inner ring points. 
 
@@ -308,13 +310,13 @@ Step 2) in the algorithm is run $n$ times.  For each of those $n$ runs, we loop,
 
 Step 3) iterates over $k^{O(\frac{1}{\beta})}$ cluster guesses, and for each of these is a simple $n^2$ procedure to find the cluster centers (iterating potentially over each point $p$, and then iterating over potentially each other point to calculate statistics to determine if $p$ is the median)  (3 b).  Subsequently, step 3 measures the cost of each of the resulting clusters, which takes $O(nk)$ time (iterate over $k$ potential clusters.  For each, iterate over up to $n$ points).  Thus, step 3) takes $O(n^2 + nk)$ iterations for each guess of $k$ components.  We need to do this $k^{O(\frac{1}{\beta})}$ times, making the runtime for step 3 $O((n^2 + nk)k^{O(\frac{1}{\beta})})$
 
-Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O(((n^2 + nk)k^{O(\frac{1}{\beta})}+n^3)n^{O(\frac{1}{\beta e})}) = O(n^{O(1/\beta\epsilon)}k^{O(1/\beta)}$ .
+Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O(((n^2 + nk)k^{O(\frac{1}{\beta})}+n^3)n^{O(\frac{1}{\beta e})}) = O(n^{O(1/\beta\epsilon)}k^{O(1/\beta))}$ .
 
 \subsection{Removing the cluster size restriction}
 
 Our analysis up until now has hinged on having all clusters of size at least $\delta n$. When lifting this restriction, there exists an algorithm which is instead $O(\delta/\alpha)$-close to the target, presented in \cite{firstpaper}. Because this proof is fundamentally different than those above, we will only sketch the proof for intuition. 
 
-We define $w(x)$ to be the distance from a point $x$ to it's closest cluster center, and $w_2(x)$ to be the distance to the second closest center. Let $w = \frac{\text{OPT}}{n}$ and $d_crit = 2\frac{\alpha w}{10 \epsilon}$. Let $X_i$ be the set of all points in $C_i^*$ for which $w(x) < d_crit$ and $w_2(x) - w(x) \geq 5d_crit$. Intuitively the points in $X_i$ are those which are strongly in $C_i^*$, and so moving them to the second closest cluster is expensive.
+We define $w(x)$ to be the distance from a point $x$ to it's closest cluster center, and $w_2(x)$ to be the distance to the second closest center. Let $w = \frac{\text{OPT}}{n}$ and $d_crit = 2\frac{\alpha w}{10 \epsilon}$. Let $X_i$ be the set of all points in $C_i^*$ for which $w(x) < d_{crit}$ and $w_2(x) - w(x) \geq 5d_{crit}$. Intuitively the points in $X_i$ are those which are strongly in $C_i^*$, and so moving them to the second closest cluster is expensive.
 
 A \textbf{threshold graph} $G_\tau = (S, E_\tau)$ to be that which has all pairs of points $(x, y)$ connected if $d(x, y) \leq \tau$. For a problem satisfying the $(1 + \alpha, \epsilon)$-property, set $\tau = 2d_{crit}$. This graph has the following properties:
 
