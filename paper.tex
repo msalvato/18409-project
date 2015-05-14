@@ -225,7 +225,7 @@ Let's begin by partitioning our set of clusters into two types.  There are  "che
 
 
 
-We provide the algorithm in fig (TODO), and give a very high level overview of the two main "stages" included.
+We provide the algorithm in Alg. \ref{alg:cluster}, and give a very high level overview of the two main "stages" included.
 
 First, the "Population stage."  We assume that we have some initial list $Q_{init}$ of graphs $\{T_i\}$ which is just the centers of the expensive clusters (i.e. one point per $T_i$).  Let $n$ be the number of datapoints.  We will count backwards (counter $s$) from $s=n$ down to $1$, i.e. once for each datapoint.
 
@@ -338,6 +338,22 @@ Step 3) iterates over $k^{O(\frac{1}{\beta})}$ cluster guesses, and for each of 
 Thus, the runtime for the entire algorithm is $O((n^2 + nk)k^{O(\frac{1}{\beta})} + n^3)$.  However, this is only for each time the algorithm is run.  In general, the algorithm must be run once for each possible guess of the expensive clusters, using a brute-force approach.  This requires $n^{O(\frac{1}{\beta e})}$ iterations.  Thus, the overall runtime is $O(((n^2 + nk)k^{O(\frac{1}{\beta})}+n^3)n^{O(\frac{1}{\beta e})}) = O(n^{O(1/\beta\epsilon)}k^{O(1/\beta)}$ .
 
 \subsection{Removing the cluster size restriction}
+
+\begin{algorithm}
+\caption{k-Mean Clustering in the General Case}\label{alg:cluster2}
+\begin{algorithmic}[1]
+\Procedure{Cluster}{}
+\BState \textbf{Input:} $w, \delta \leq 1, \alpha > 0, k.$
+\BState \textbf{Step 1:} Construct the $\tau$-threshold graph $G_{\tau}$ with $\tau = 2d_{crit} = \frac{\alpha w}{5 \delta}$.
+
+\BState \textbf{Step 2:} For $j = 1$ to $k$ do:
+\State Pick the vertex $v_j$ of the highest degree in $G_{\tau}$.
+\State Remove $v_j$ and its neighborhood from $G_{\tau}$ and call this cluster $C(v_j)$.
+\BState \textbf{Step 3:} Output the $k$ clusters $C(v_1), ..., C(v_{k-1}), S - \bigcup_{i=1}^{k-1}C(v_i)$.
+
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
 Our analysis up until now has hinged on having all clusters of size at least $\delta n$. When lifting this restriction, there exists an algorithm which is instead $O(\delta/\alpha)$-close to the target, presented in \cite{firstpaper}. Because this proof is fundamentally different than those above, we will only sketch the proof for intuition. 
 
